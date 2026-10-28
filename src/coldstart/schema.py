@@ -37,8 +37,16 @@ class DatasetMeta:
     verified_against_real_file: bool = False
 
 
+def present_channels(df: pd.DataFrame) -> list[str]:
+    """Channels the dataset actually provides. A channel the source lacks is all-NaN (never imputed)."""
+    return [c for c in CHANNELS if df[c].notna().any()]
+
+
 def validate(df: pd.DataFrame) -> None:
-    """Raise ValueError if df does not follow the canonical layout."""
+    """Raise ValueError if df does not follow the canonical layout.
+
+    A channel is either absent (all NaN) or present, in which case valid rows must not contain NaN in it.
+    """
     missing = [c for c in CANONICAL_COLUMNS if c not in df.columns]
     if missing:
         raise ValueError(f"missing canonical columns: {missing}")
@@ -49,6 +57,6 @@ def validate(df: pd.DataFrame) -> None:
     if not df["segment"].is_monotonic_increasing:
         raise ValueError("segment ids must be non-decreasing")
     bad = df[df["valid"]]
-    for c in CHANNELS:
+    for c in present_channels(df):
         if bad[c].isna().any():
             raise ValueError(f"valid rows contain NaN in {c}")

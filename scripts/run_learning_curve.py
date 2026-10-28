@@ -42,6 +42,8 @@ def main():
     p.add_argument("--models", nargs="+", default=["ridge", "huber", "random_forest", "lightgbm", "gru"])
     p.add_argument("--seeds", type=int, default=3)
     p.add_argument("--alert-q", type=float, default=90)
+    p.add_argument("--calendar", action=argparse.BooleanOptionalAction, default=True,
+                   help="add hour-of-day sin/cos and a weekend flag (from the origin time) to the learned models' inputs")
     p.add_argument("--out", required=True)
     a = p.parse_args()
 
@@ -57,7 +59,10 @@ def main():
     purge = a.horizon + a.lags * a.cadence
     # windows closer than this many steps share grid points; validation inside a model skips them
     gap = a.lags + a.horizon // a.cadence
-    print(f"{meta.name}: grid={len(grid)} windows={len(w.y)} channels={chs}")
+    # learned models get calendar columns appended; baselines keep reading the lag block of w.X
+    X = np.hstack([w.X, ev.calendar_features(w.t0)]) if a.calendar else w.X
+    n_static = len(ev.CALENDAR) if a.calendar else 0
+    print(f"{meta.name}: grid={len(grid)} windows={len(w.y)} channels={chs} calendar={a.calendar}")
 
     rows = []
     for D in a.days:
@@ -67,7 +72,7 @@ def main():
             tr = tr[w.t0[tr] >= t_end - np.timedelta64(int(D * 86400), "s")]
             thr = percentile_threshold(w.y[tr], a.alert_q)
             base = {"dataset": a.dataset, "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
-                    "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
+                    "calendar": a.calendar, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
                     "test_start": str(w.t0[te].min()), "host": platform.machine()}
             # baselines (seed-independent)
             preds = {"persistence": ev.persistence(w, te), "moving_average": ev.moving_average(w, te, len(chs))}
@@ -75,10 +80,10 @@ def main():
                 rows.append({**base, "model": name, "seed": 0, **_metrics(w, tr, te, yp, thr, a)})
             for mname in a.models:
                 for seed in range(a.seeds if mname in ("random_forest", "lightgbm", "gru") else 1):
-                    kw = {"gap": gap, **({"n_channels": len(chs)} if mname == "gru" else {})}
-                    model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(w.X[tr], w.y[tr], w.y0[tr]))
-                    yp = model.predict(w.X[te], w.y0[te])
-                    infer = _infer_ms(model, w.X[te], w.y0[te])
+                    kw = {"gap": gap, **({"n_channels": len(chs), "n_static": n_static} if mname == "gru" else {})}
+                    model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(X[tr], w.y[tr], w.y0[tr]))
+                    yp = model.predict(X[te], w.y0[te])
+                    infer = _infer_ms(model, X[te], w.y0[te])
                     rows.append({**base, "model": mname, "seed": seed, **_metrics(w, tr, te, yp, thr, a),
                                  **cost.asdict(), "infer_ms": infer})
             print(f"D={D} split={split} done")

@@ -65,6 +65,20 @@ def make_windows(grid: pd.DataFrame, target: str, channels: list[str], n_lags: i
     return Windows(np.array(Xs), np.array(ys), np.array(y0s), np.array(t0s), np.array(tts))
 
 
+CALENDAR = ["hour_sin", "hour_cos", "weekend"]
+
+
+def calendar_features(t0: np.ndarray) -> np.ndarray:
+    """(n, 3) hour of day as sin/cos and a Saturday/Sunday flag, from the window origin time stamps only (no leakage).
+
+    Uses the clock of the source (local, UTC or unknown; see DatasetMeta.timezone): a fixed offset only shifts the phase.
+    """
+    t = pd.DatetimeIndex(t0)
+    hour = (t.hour + t.minute / 60 + t.second / 3600).to_numpy(dtype=float)
+    ang = 2 * np.pi * hour / 24
+    return np.column_stack([np.sin(ang), np.cos(ang), (t.day_of_week >= 5).astype(float)])
+
+
 def mase(y_true: np.ndarray, y_pred: np.ndarray, train_y: np.ndarray, train_y0: np.ndarray) -> float:
     """MASE relative to persistence: MAE(model, test) / MAE(persistence, train)."""
     denom = np.mean(np.abs(train_y - train_y0))

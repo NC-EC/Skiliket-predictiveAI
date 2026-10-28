@@ -155,13 +155,18 @@ class LGBMDelta:
 
 
 class GRUDelta(_Scaled):
-    """Tiny GRU (hidden=16, ~1k params). Early stopping on the last 10% of training windows (time order, after a gap)."""
+    """Tiny GRU (hidden=16, ~1k params). Early stopping on the last 10% of training windows (time order, after a gap).
+
+    The last `n_static` columns of X (calendar features) are repeated at every time step as extra input channels.
+    """
 
     name = "gru"
 
     def __init__(self, seed: int = 0, n_channels: int = 4, hidden: int = 16, epochs: int = 60,
-                 lr: float = 1e-2, patience: int = 8, batch: int = 128, threads: int = 1, gap: int = GAP):
+                 lr: float = 1e-2, patience: int = 8, batch: int = 128, threads: int = 1, gap: int = GAP,
+                 n_static: int = 0):
         self.seed, self.C, self.hidden, self.epochs, self.gap = seed, n_channels, hidden, epochs, gap
+        self.n_static = n_static
         self.lr, self.patience, self.batch, self.threads = lr, patience, batch, threads
 
     def _net(self):
@@ -177,13 +182,18 @@ class GRUDelta(_Scaled):
                 _, hN = s.gru(x)
                 return s.out(hN[-1]).squeeze(-1)
 
-        return Net(self.C, self.hidden)
+        return Net(self.C + self.n_static, self.hidden)
 
     def _tensor(self, X):
         import torch
 
-        Xs = self._scale(X).reshape(len(X), -1, self.C)
-        return torch.tensor(Xs, dtype=torch.float32)
+        Xs = self._scale(X)
+        n_dyn = Xs.shape[1] - self.n_static
+        seq = Xs[:, :n_dyn].reshape(len(X), -1, self.C)
+        if self.n_static:
+            static = np.repeat(Xs[:, None, n_dyn:], seq.shape[1], axis=1)
+            seq = np.concatenate([seq, static], axis=2)
+        return torch.tensor(seq, dtype=torch.float32)
 
     def fit(self, X, y, y0):
         import torch

@@ -83,3 +83,12 @@ def test_skiliket_real_file_matches_profile():
     assert (df["eco2"] >= 400).all()
     assert meta.timezone == "unknown"
     assert 6.7 < rep["span_days"] < 6.8
+
+
+def test_calendar_features_from_origin_time():
+    t0 = np.array(["2024-03-01T00:00", "2024-03-01T06:00", "2024-03-02T12:00", "2024-03-03T18:00"], dtype="datetime64[ns]")
+    f = ev.calendar_features(t0)  # 2024-03-01 is a Friday
+    assert f.shape == (4, len(ev.CALENDAR))
+    np.testing.assert_allclose(f[:, 0], [0, 1, 0, -1], atol=1e-12)  # sin of hour
+    np.testing.assert_allclose(f[:, 1], [1, 0, -1, 0], atol=1e-12)  # cos of hour
+    np.testing.assert_array_equal(f[:, 2], [0, 0, 1, 1])  # Sat, Sun

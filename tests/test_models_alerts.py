@@ -107,3 +107,11 @@ def test_huber_resists_spikes_that_pull_ridge():
 
     assert m.epsilon_ in EPSILONS
     assert errs["huber"] < errs["ridge"]
+
+
+def test_gru_takes_static_calendar_columns():
+    X, y, y0 = _data(300)
+    Xc = np.hstack([X, np.random.default_rng(0).normal(size=(300, 3))])  # 3 calendar-like columns
+    m = REGISTRY["gru"](seed=0, n_channels=2, n_static=3, epochs=2).fit(Xc, y, y0)
+    assert m._tensor(Xc[:4]).shape == (4, 6, 5)
+    assert np.isfinite(m.predict(Xc[:4], y0[:4])).all()

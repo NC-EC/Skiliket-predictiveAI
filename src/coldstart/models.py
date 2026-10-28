@@ -8,8 +8,9 @@ Small-data regularization (cold start means a few hundred windows): every choice
 in time order. Ridge picks alpha and Huber epsilon by time-ordered CV on MAE, the forest uses large leaves,
 LightGBM picks the number of trees by early stopping on the last 10% of training windows, then refits on all of
 them. The change y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
-Every predicted change is clipped to the [p1, p99] range of the training changes, so one wild extrapolation
-cannot dominate a test day.
+With clip=True every predicted change is clipped to the [p1, p99] range of the training changes. Off by default: on
+DALTON H1_41 (h15, D=1/3/7) it left huber's mean and median rel_mae unchanged (the large mean came from one 10-window
+test split, not from extrapolated changes).
 
 Model(seed).fit(X, y, y0) -> self ; .predict(X, y0) -> y_hat
 X has shape (n, n_lags * n_channels), channels interleaved per lag (see evaluate.make_windows).
@@ -49,12 +50,12 @@ CLIP_Q = (1.0, 99.0)  # percentiles of the training changes y - y0 that bound ev
 
 
 class _ChangeModel:
-    """Shared output step: y_hat = y0 + clip(predicted change, training [p1, p99]).
+    """Shared output step: y_hat = y0 + predicted change, clipped to the training [p1, p99] when clip=True.
 
     `cv_rel_mae_` is the model's own time-ordered validation score, MAE(model) / MAE(persistence) on the same
     validation windows, left NaN when a history is too short to validate; the cold-start policy reads it."""
 
-    clip = True
+    clip = False
     cv_rel_mae_ = float("nan")
 
     def _set_clip(self, d):

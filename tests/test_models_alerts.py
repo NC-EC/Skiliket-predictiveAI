@@ -141,12 +141,15 @@ def test_policy_falls_back_to_persistence():
 def test_predicted_change_is_clipped_to_training_range(name):
     X, y, y0 = _data(400)
     kw = {"n_channels": 2, "epochs": 2} if name == "gru" else {}
-    m = REGISTRY[name](seed=0, gap=18, **kw).fit(X, y, y0)
+    m = REGISTRY[name](seed=0, gap=18, **kw)
+    m.clip = True
+    m.fit(X, y, y0)
     lo, hi = np.percentile(y - y0, [1, 99])
     assert (m.d_lo, m.d_hi) == (lo, hi)
     # inputs far outside the training range would extrapolate a huge change without the clip
     d = m.predict(X[:20] * 50, y0[:20]) - y0[:20]
     assert (d >= lo - 1e-9).all() and (d <= hi + 1e-9).all()
+    assert REGISTRY[name](seed=0, gap=18, **kw).fit(X, y, y0).d_hi == np.inf  # off by default
 
 
 def test_huber_tol_is_passed_to_the_solver():

@@ -55,7 +55,14 @@ LightGBM ~2.0 -> 1.02-1.07, Ridge 1.46-2.04 -> 1.02-1.19, RF 2.2 -> 1.6-1.7. Not
 Compare models with the median of `rel_mae` across splits, not the mean of MASE.
 
 QUANT/UCI replaced by `adapters/dalton.py` and `adapters/urbino.py` with real-file tests; smoke runs
-`results/smoke_dalton_H1_41.csv` (15 min) and `results/smoke_urbino_olivetti.csv` (`--cadence 10 --horizon 30`).
+`results/smoke_urbino_olivetti.csv` (`--cadence 10 --horizon 30`) and `results/smoke_dalton_H1_41_h{15,30,60}.csv`
+(`--cadence 5 --days 1 3 7 14`; ~24 days of grid, so 25/23/19/12 splits; ~8 min per horizon on the Ryzen 5 5500).
+Median rel_mae (smoke, not results):
+- Urbino olivetti, h30, D=1/3/7: LightGBM 1.00/1.00/0.99 (wins 50/45/60 % of splits), Ridge 1.01/1.00/1.00.
+- DALTON H1_41, D=1/3/7/14: LightGBM h15 1.05/1.00/0.99/1.00, h30 1.05/1.00/0.99/1.00, h60 1.04/1.02/0.97/1.00
+  (wins 72 % of splits at h60 D=7). Ridge gets worse with more days (h15 1.00 -> 1.19; cause not yet checked).
+  RF 1.1-1.6 and GRU 1.05-1.4 lose everywhere; moving average ~1.0-1.1.
+Only LightGBM approaches persistence, and only from D=3; check it on more devices before reading anything into it.
 
 ## CURRENT TASK (on the user's PC)
 1. Measure timing inside Docker with `--cpus 1|2 --memory 1g|2g` on this PC (Ryzen 5 5500 = timing reference).

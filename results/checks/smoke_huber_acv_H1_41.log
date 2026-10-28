@@ -1,0 +1,63 @@
+DALTON H1_41: grid=6832 windows=6790 channels=['eco2', 'tvoc', 'temp_c', 'rh_pct'] calendar=True
+D=1.0 split=0 done
+D=1.0 split=1 done
+D=1.0 split=2 done
+D=1.0 split=3 done
+D=1.0 split=4 done
+D=1.0 split=5 done
+D=1.0 split=6 done
+D=1.0 split=7 done
+D=1.0 split=8 done
+D=1.0 split=9 done
+D=1.0 split=10 done
+D=1.0 split=11 done
+D=1.0 split=12 done
+D=1.0 split=13 done
+D=1.0 split=14 done
+D=1.0 split=15 done
+D=1.0 split=16 done
+D=1.0 split=17 done
+D=1.0 split=18 done
+D=3.0 split=0 done
+D=3.0 split=1 done
+D=3.0 split=2 done
+D=3.0 split=3 done
+D=3.0 split=4 done
+D=3.0 split=5 done
+D=3.0 split=6 done
+D=3.0 split=7 done
+D=3.0 split=8 done
+D=3.0 split=9 done
+D=3.0 split=10 done
+D=3.0 split=11 done
+D=3.0 split=12 done
+D=3.0 split=13 done
+D=3.0 split=14 done
+D=3.0 split=15 done
+D=3.0 split=16 done
+D=3.0 split=17 done
+D=3.0 split=18 done
+D=7.0 split=0 done
+D=7.0 split=1 done
+D=7.0 split=2 done
+D=7.0 split=3 done
+D=7.0 split=4 done
+D=7.0 split=5 done
+D=7.0 split=6 done
+D=7.0 split=7 done
+D=7.0 split=8 done
+D=7.0 split=9 done
+D=7.0 split=10 done
+D=7.0 split=11 done
+D=7.0 split=12 done
+D=7.0 split=13 done
+D=7.0 split=14 done
+D=7.0 split=15 done
+D=7.0 split=16 done
+D=7.0 split=17 done
+D=7.0 split=18 done
+model       huber  huber_acv  moving_average  persistence
+train_days                                               
+1.0         1.485      1.188           1.386        1.176
+3.0         1.133      1.022           1.223        1.022
+7.0         0.815      0.740           0.885        0.754

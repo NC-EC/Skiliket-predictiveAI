@@ -28,9 +28,11 @@ The user speaks Spanish; reply in Spanish. Code, comments and the paper are in E
 | Dataset | Source | License | Notes |
 |---|---|---|---|
 | EDIAQI indoor | Zenodo record 14763137 | CC BY 4.0 | One house in Zagreb, 11-31 Oct 2024. 22 devices (providers 1-6, some multi-unit, plus a reference instrument), 5 s-10 min. Local Zagreb wall clock; the DST hour 2024-10-27 02:00-03:00 is dropped. TVOC in ppb only for providers 1, 3, 4 (ppm x1000), 6. **No labeled-events JSON** in this record (only People/Door/Motion logs). Main dataset for alerts. Leave-one-device-out. |
-| QUANT | Zenodo record 10775692 | CC BY 4.0 | 49 commercial devices at outdoor UK urban sites, hourly CSV only, 2019-2022. **No CO2 and no TVOC** (checked in the real file): only temp/RH map. Cannot be a target dataset. |
-| UCI Air Quality | UCI id 360 | research use | Outdoor, hourly, 9,357 rows 2004-2005, `-200` = missing (invalid, drop). No eCO2/TVOC: only temp/RH map. |
+| DALTON | github.com/prasenjit52282/dalton-dataset (CSVs in Git LFS) | AGPL-3.0 (authors: free for non-commercial research); cite the paper (arXiv 2407.14501) | India, 30 indoor sites (homes H1-H13, studios A1-A8, labs R1-R5, canteens F1-F2, classrooms C1-C2), ~69 devices, 2022-2024, summer + winter, 1 Hz. CO2 ppm (MH-Z16 NDIR), VoC ppb (Winsen MEMS), T degC, H %, plus PM/NO2/CO/C2H5OH (out of scope). `Processed/<Site>/<Date>/<ID_Loc>.csv`. **Gaps > 15 min were filled with zeros by the authors: treat as invalid.** Respect the `Valid` / `Valid_CO2` columns. ~3,957 activity annotations (`Metadata/Annotations_cleaned.csv`, cooking, incense, AC...) = events for alert evaluation. Main dataset for leave-one-site-out. |
+| Urbino classrooms | Zenodo record 17487080 | CC BY 4.0 | Italy, 3 university classrooms (olivetti, turing, von_neumann), one year, 10-min cadence. CO2, T, RH, PM, noise; **no TVOC**. Units not stated on the record page: check the files/metadata. Used for long learning curves (weeks to months) and seasonality; horizons 30/60 min only. |
 | SKILIKET | Zenodo (team) | CC BY 4.0 | Reference for channels/units; adapter done and verified. |
+
+QUANT and UCI Air Quality were **dropped** (2026-10-28, user decision): both are outdoor and have no CO2/TVOC.
 
 ## Environment (user's PC, Windows)
 The only system Python is MSYS2's, which cannot install torch/lightgbm wheels. Use the uv-managed venv:
@@ -54,7 +56,18 @@ max(5 min, 1.5 x native step), mirroring `evaluate.to_grid`.
    - If EDIAQI shows the same pattern, propose (don't apply silently) small-data regularization chosen on training data only:
      RidgeCV with time-ordered folds, RF `min_samples_leaf` ~20, LightGBM fewer trees + early stopping on the training tail.
    - The runner now also writes `rel_mae` (MAE model / MAE persistence on the same test split). Report both.
-2. Measure timing inside Docker with `--cpus 1|2 --memory 1g|2g` on this PC (Ryzen 5 5500 = timing reference).
+2. Replace QUANT/UCI with DALTON and Urbino (only after item 1 is reported):
+   - Delete `adapters/quant.py`, `adapters/uci_air_quality.py` and their tests; keep `pytest` green.
+   - Run the updated `scripts/download_datasets.sh` (needs `git lfs`; DALTON is ~1,335 CSVs, check disk space first and
+     report the total size). Report file names, columns, first rows and sampling step for one site of each dataset.
+   - `adapters/dalton.py`: devices = `<Site>_<ID>` (e.g. `H1_41`); concatenate that device's daily files; map CO2 -> eco2,
+     VoC -> tvoc (ppb), T -> temp_c, H -> rh_pct; invalid = Valid == 0, or Valid_CO2 == 0 for eco2, or the author-filled zeros;
+     timezone: state what the metadata says (likely IST, UTC+05:30) or keep "unknown". Add `load_events(path, site)` returning
+     the annotation timestamps and labels for alert evaluation. Expose `devices(path)` like EDIAQI.
+   - `adapters/urbino.py`: device = room name; map CO2/T/RH after checking units in the files.
+   - Real-file tests per adapter (skipped when files are absent), then smoke-run the runner on one DALTON device
+     (`results/smoke_dalton_<device>.csv`) and one Urbino room with `--cadence 10 --horizon 30`. Commit and push.
+3. Measure timing inside Docker with `--cpus 1|2 --memory 1g|2g` on this PC (Ryzen 5 5500 = timing reference).
 
 ## Open decisions (ask the user, don't assume)
-Sensor model / time zone / device ID of SKILIKET kits; whether to keep QUANT and UCI (no target channel, outdoor) or replace them with an indoor eCO2/TVOC dataset; zero-shot pretrained model (Chronos vs TimesFM, check license and size); false-alarm budget; publication venue.
+Sensor model / time zone / device ID of SKILIKET kits; zero-shot pretrained model (Chronos vs TimesFM, check license and size); false-alarm budget; publication venue.

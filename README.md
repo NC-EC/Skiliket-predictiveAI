@@ -10,7 +10,8 @@ SKILIKET project, Tec de Monterrey, team 9 (Modelos Predictivos).
 - [x] SKILIKET adapter, verified against the real Zenodo file (`src/coldstart/adapters/skiliket.py`)
 - [x] Evaluation core: rolling origin with purge, MASE vs persistence, baselines (`src/coldstart/evaluate.py`)
 - [x] Cost measurement: wall/CPU time, memory, model size, inference latency (`src/coldstart/cost.py`)
-- [x] Adapters for EDIAQI (22 devices), UCI Air Quality and QUANT, verified against the real files (`src/coldstart/adapters/`). QUANT and UCI have no eCO2/TVOC (covariates only)
+- [x] Adapter for EDIAQI (22 devices), verified against the real files (`src/coldstart/adapters/`)
+- [ ] Adapters for DALTON (30 indoor sites, CO2 + VOC, activity annotations) and Urbino classrooms (CO2, one year). QUANT and UCI were dropped (outdoor, no CO2/TVOC)
 - [x] Models: Ridge, random forest, LightGBM, tiny GRU (~1k params), all predicting change vs persistence (`src/coldstart/models.py`)
 - [x] Alert evaluation: percentile threshold, recall, false alarms/day, lead time (`src/coldstart/alerts.py`)
 - [x] Statistics: block bootstrap CI, cold-start criterion, Diebold-Mariano (`src/coldstart/stats.py`)
@@ -28,7 +29,7 @@ python scripts/run_learning_curve.py --dataset skiliket --path data/raw/skiliket
 ```
 
 ## Data
-Raw data is **not** redistributed. Download it with `scripts/download_datasets.sh` (EDIAQI and QUANT from Zenodo, CC BY 4.0; UCI Air Quality, research use) and the SKILIKET dataset from its Zenodo record.
+Raw data is **not** redistributed. Download it with `scripts/download_datasets.sh` (EDIAQI and Urbino classrooms from Zenodo, CC BY 4.0; DALTON from GitHub via Git LFS, AGPL-3.0, non-commercial research) and the SKILIKET dataset from its Zenodo record.
 
 ## Conventions
 Canonical channels: `eco2` (ppm), `tvoc` (ppb), `aqi` (sensor index 1–5), `temp_c` (°C), `rh_pct` (%).

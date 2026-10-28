@@ -101,12 +101,28 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   CSVs, not by the models; `peak_py_mb` (tracemalloc, 0.3-2 MB) misses native torch/LightGBM buffers. A per-model
   memory number needs a fresh process per fit on pre-gridded data (not done).
 
+## Done 2026-10-28 (evening)
+- Change clip [p1, p99] (`_ChangeModel.clip`): implemented and tested, **off by default**: on H1_41 h15 it left huber's
+  mean rel_mae unchanged (3.00 vs 2.98). The mean comes from one test split with 10 windows (persistence MAE 1.35,
+  huber rel_mae 33 at every D). Open: a minimum test size per split, applied in summarize (n_test is in every CSV).
+- Huber speed-up not adopted: max_iter=100 is 4x faster but changes rel_mae (R1_51 D=1 median 1.04 -> 1.15);
+  tol=1e-3 changes nothing (lbfgs stops on max_iter).
+- `policy` picks by the candidates' own validation scores (`cv_rel_mae_`: ridge/huber CV folds, LightGBM early-stopping
+  tail) and reuses the runner's fitted models: no extra training. Its cost row = sum of the candidates' times.
+- Grid cache in `data/cache/` (`coldstart.cache`, keyed by a hash of adapter + base + evaluate code).
+- **Cost for the paper: `peak_py_mb` of the fit** (summarize reports medians of train_s, peak_py_mb, infer_ms,
+  model_bytes), not the process RSS.
+- Small check (C1_25 h15, all models): runs end to end; D* = NaN for all (nothing meets the criterion there); on the
+  R1_51 check CSV huber D* = 3 as expected. Policy loses at D <= 3 on C1_25 (picks LightGBM on a CV score < 1, then
+  loses on test): the validation score is optimistic on very short histories.
+
 ## CURRENT TASK
-Result runs, waiting for the user's go: estimate (1 CPU-core ~17 s per (D, split) cell with policy; huber + policy's
-huber ~ 2/3 of it): DALTON ~23,500 cells ~111 CPU-h; EDIAQI (16 devices with ppb TVOC, 2 targets, 3 horizons, D=1-7,
-~13 splits) ~6,200 cells ~30 CPU-h; Urbino (3 rooms, ~95-117 days with data over 366, D up to 60) ~4,400 cells
-~30 CPU-h. Total ~170 CPU-h, ~30-35 h wall with 5-6 parallel processes on the Ryzen 5 5500.
-Then: random forest and GRU stay as reported results, no more tuning time.
+**Batch 1 running** (started 2026-10-28 16:26, detached: `scripts/run_batch.py --batch 1 --workers 5`, progress in
+`results/runs/batch1.log`, per-job logs in `results/runs/logs/`; resumable: rerun the same command and finished CSVs
+are skipped). DALTON eco2 (68 devices x h15/30/60, D=1/2/3/5/7/14) + Urbino (3 rooms x h15/30/60, D=1/3/7/14/30/60),
+213 jobs. Estimate ~65-70 CPU-h, ~14-16 h wall (DALTON ~11.7k cells x ~11 s; Urbino ~16k cells, ~295 splits per room).
+Then: summarize (`results/summary_batch1_*`; commit summaries, not per-split CSVs if large), batch 2 (DALTON tvoc +
+EDIAQI). Random forest and GRU stay as reported results, no more tuning time.
 
 Notes for the paper (do not act on them now): DALTON's clock time zone is unknown, so hour-of-day features are in each
 device's own clock (fine for per-device models, not comparable across sites); calendar features are what turns the

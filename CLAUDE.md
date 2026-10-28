@@ -84,28 +84,29 @@ columns are not timing. Median rel_mae, D=1/3/7/14 (smoke, not results):
 Pattern: with D=1 every learned model is >= persistence (huber worst, 1.15-2.2); from D=3 the linear models with calendar
 features beat persistence on 3 of 4 devices. Not yet checked against the cold-start criterion (CI bound).
 
-## CURRENT TASK (on the user's PC), in this order
-User decisions 2026-10-28: **`--common-test` is ON for every result run** (make it the default; keep `--no-common-test`
-for smoke checks). Huber alpha by CV: finish the running check; keep it only if it helps at D >= 3 without hurting elsewhere.
+## Done 2026-10-28 (afternoon, user's PC)
+- `--common-test` is the default (`--no-common-test` for smoke). The runner drops train lengths a device cannot hold
+  (D + test_days > span), so short devices keep their feasible D instead of losing every split. CSVs now carry
+  `device` and `policy_choice`.
+- Huber alpha by CV (`results/checks/`, H1_41 + R1_51, h15, D=1/3/7): helps H1_41 (median rel_mae D=3 1.09 -> 0.99)
+  but hurts R1_51 at D=3 (0.756 -> 0.935): **not kept**, alpha stays 1e-4. Note: fixed-alpha huber has outlier splits
+  on H1_41 (mean rel_mae 2.8-3.0 vs median 1.0-1.15).
+- `scripts/summarize.py` (cells + D*) with tests; `policy` model (ridge/huber/lightgbm on the training tail
+  (20 %, same gap), else persistence; one seed).
+- Edge timing, Docker (`results/edge/`, DALTON H1_41, h30, D=1/3/7, 19 splits, 5 models, libraries pinned to the host
+  versions): 10.6-10.9 min per configuration; **CPU 1 vs 2 and 1 vs 2 GB make no difference** (all models single-thread,
+  n_jobs=1). Median train s at D=7: huber 5.3 (its CV, 26 lbfgs fits), RF 1.75, GRU 0.43, ridge 0.30, LightGBM 0.03.
+  Inference per window: ridge/huber 0.09 ms, GRU 0.22, LightGBM 0.40, RF 6.6 ms. Model size: ridge 1.3 kB, huber 2.2,
+  GRU 6.0, LightGBM 9.3, RF 240 kB. Process peak RSS 642 MB in every configuration, dominated by loading 1 Hz DALTON
+  CSVs, not by the models; `peak_py_mb` (tracemalloc, 0.3-2 MB) misses native torch/LightGBM buffers. A per-model
+  memory number needs a fresh process per fit on pre-gridded data (not done).
 
-1. **Summary script** `scripts/summarize.py` (reads one or more runner CSVs; writes `results/summary_*.csv`):
-   per dataset x device x target x horizon x model x D: median rel_mae, mean rel_mae with 95% block-bootstrap CI
-   (groups = split, so seeds stay together), % of splits won vs persistence, n_splits, and `meets_cold_start`.
-   Plus, per device x target x horizon x model: **D\*** = the smallest D that meets the cold-start criterion (NaN if none).
-   D\* is the paper's headline quantity. Unit-test it on a small labeled synthetic CSV.
-2. **Cold-start policy (practical contribution)**: add model name `policy`: inside each split, compare the best learned
-   model (by rel_mae on the training tail, same gap rules) with persistence and use persistence when no model wins there.
-   It answers "what should a brand-new kit actually run on day N". It must use training data only.
-3. **Result runs** (`results/runs/`, not smoke; commit only the summaries, not the per-split CSVs if they are large):
-   - DALTON: every device, target eco2 and tvoc, horizons 15/30/60, `--days 1 2 3 5 7 14`, `--seeds 3`, `--common-test`.
-     Devices with too few days for D=14 simply yield fewer columns. Run several processes in parallel (timing columns
-     from parallel runs are NOT timing results; say so in the CSV `host` or a `parallel` column).
-   - Urbino: 3 rooms, eco2, horizons 15/30/60 (files are 5-min), `--days 1 3 7 14 30 60`, `--common-test`.
-   - EDIAQI: providers with TVOC in ppb (1, 3, 4, 6) for eco2 and tvoc, horizons 15/30/60, `--days 1 2 3 5 7`.
-   Estimate total time first (H1_41 took ~8 min per horizon) and tell the user before starting a run longer than ~6 h.
-4. Timing in Docker (`scripts/run_edge_matrix.sh`) once the user has installed WSL2 + Docker Desktop. Run timing
-   configurations one at a time, with nothing else running.
-5. Random forest and GRU: keep them in the paper as reported results, no more tuning time.
+## CURRENT TASK
+Result runs, waiting for the user's go: estimate (1 CPU-core ~17 s per (D, split) cell with policy; huber + policy's
+huber ~ 2/3 of it): DALTON ~23,500 cells ~111 CPU-h; EDIAQI (16 devices with ppb TVOC, 2 targets, 3 horizons, D=1-7,
+~13 splits) ~6,200 cells ~30 CPU-h; Urbino (3 rooms, ~95-117 days with data over 366, D up to 60) ~4,400 cells
+~30 CPU-h. Total ~170 CPU-h, ~30-35 h wall with 5-6 parallel processes on the Ryzen 5 5500.
+Then: random forest and GRU stay as reported results, no more tuning time.
 
 Notes for the paper (do not act on them now): DALTON's clock time zone is unknown, so hour-of-day features are in each
 device's own clock (fine for per-device models, not comparable across sites); calendar features are what turns the

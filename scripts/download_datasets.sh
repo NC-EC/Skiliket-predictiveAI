@@ -6,9 +6,9 @@ mkdir -p data/raw/{ediaqi,urbino}
 
 zenodo() {  # zenodo <record id> <dest dir> <file>...
   local rec=$1 dest=$2; shift 2
-  curl -sSL --retry 3 "https://zenodo.org/api/records/$rec" -o "$dest/record.json"
+  curl -fsSL --retry 3 "https://zenodo.org/api/records/$rec" -o "$dest/record.json"
   for f in "$@"; do
-    curl -sSL --retry 3 "https://zenodo.org/api/records/$rec/files/$f/content" -o "$dest/$f"
+    curl -fsSL --retry 3 "https://zenodo.org/api/records/$rec/files/$f/content" -o "$dest/$f"
   done
 }
 
@@ -20,6 +20,8 @@ unzip -o -q -j data/raw/ediaqi/data.zip -d data/raw/ediaqi
 zenodo 17487080 data/raw/urbino olivetti.csv turing.csv von_neumann.csv
 
 # DALTON (GitHub, AGPL-3.0; non-commercial research). CSVs are in Git LFS: requires `git lfs install` once.
+command -v git-lfs >/dev/null || { echo "git lfs is required for DALTON (install it, then run: git lfs install)"; exit 1; }
+echo "DALTON is ~1,335 CSVs at 1 Hz (several GB); free disk space:"; df -h . | tail -1
 if [ ! -d data/raw/dalton/.git ]; then
   git clone --depth 1 https://github.com/prasenjit52282/dalton-dataset data/raw/dalton
 fi

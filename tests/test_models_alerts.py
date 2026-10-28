@@ -65,3 +65,20 @@ def test_stats_ci_and_dm():
     e = rng.normal(size=500)
     dm, p = stats.diebold_mariano(e * 0.5, e)
     assert dm < 0 and p < 0.01
+
+
+def test_val_split_skips_overlapping_windows():
+    from coldstart.models import _val_split
+
+    # 6 lags + 12 horizon steps (60 min at 5 min): windows less than 18 apart share grid points
+    fit, val = _val_split(500, gap=18)
+    assert val.start - fit.stop >= 18
+    assert val.stop == 500
+
+
+@pytest.mark.parametrize("name", list(REGISTRY))
+def test_models_accept_gap(name):
+    X, y, y0 = _data(300)
+    kw = {"n_channels": 2, "epochs": 2} if name == "gru" else {}
+    m = REGISTRY[name](seed=0, gap=18, **kw).fit(X, y, y0)
+    assert np.isfinite(m.predict(X[:5], y0[:5])).all()

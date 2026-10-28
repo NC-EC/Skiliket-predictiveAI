@@ -21,9 +21,12 @@ from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 ALPHAS = np.logspace(-2, 4, 13)
 
 
-def _val_split(n: int, frac: float = 0.1, gap: int = 12) -> tuple[slice, slice]:
+GAP = 12  # default gap in windows; the runner passes n_lags + horizon_steps
+
+
+def _val_split(n: int, frac: float = 0.1, gap: int = GAP) -> tuple[slice, slice]:
     """Fit on the head, validate on the time-ordered tail; `gap` windows are skipped so overlapping windows
-    (lags + horizon) do not leak from fit into validation."""
+    (a window spans n_lags + horizon_steps grid steps) do not leak from fit into validation."""
     n_val = max(1, int(frac * n))
     return slice(0, max(1, n - n_val - gap)), slice(n - n_val, n)
 
@@ -40,7 +43,7 @@ class _Scaled:
 class RidgeDelta(_Scaled):
     name = "ridge"
 
-    def __init__(self, seed: int = 0, alpha: float | None = None, cv_splits: int = 5, gap: int = 12):
+    def __init__(self, seed: int = 0, alpha: float | None = None, cv_splits: int = 5, gap: int = GAP):
         self.alpha, self.cv_splits, self.gap = alpha, cv_splits, gap  # alpha=None: chosen by time-ordered CV
 
     def fit(self, X, y, y0):
@@ -68,7 +71,8 @@ class ForestDelta:
     name = "random_forest"
 
     def __init__(self, seed: int = 0, n_estimators: int = 100, max_depth: int | None = 8, min_samples_leaf: int = 20,
-                 n_jobs: int = 1):
+                 n_jobs: int = 1, gap: int = GAP):
+        # gap is accepted for a uniform interface; the forest does no validation
         self.m = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, min_samples_leaf=min_samples_leaf,
                                        random_state=seed, n_jobs=n_jobs)
 
@@ -84,10 +88,10 @@ class LGBMDelta:
     name = "lightgbm"
 
     def __init__(self, seed: int = 0, n_estimators: int = 300, num_leaves: int = 7, patience: int = 20,
-                 n_jobs: int = 1):
+                 n_jobs: int = 1, gap: int = GAP):
         import lightgbm as lgb
 
-        self.patience = patience
+        self.patience, self.gap = patience, gap
         self.m = lgb.LGBMRegressor(n_estimators=n_estimators, num_leaves=num_leaves, learning_rate=0.05,
                                    min_child_samples=20, subsample=0.8, subsample_freq=1, colsample_bytree=0.8,
                                    random_state=seed, n_jobs=n_jobs, verbose=-1)
@@ -96,7 +100,7 @@ class LGBMDelta:
         import lightgbm as lgb
 
         d = y - y0
-        fit, val = _val_split(len(X))
+        fit, val = _val_split(len(X), gap=self.gap)
         self.m.fit(X[fit], d[fit], eval_X=X[val], eval_y=d[val], eval_metric="l1",
                    callbacks=[lgb.early_stopping(self.patience, first_metric_only=True, verbose=False)])
         return self
@@ -106,13 +110,13 @@ class LGBMDelta:
 
 
 class GRUDelta(_Scaled):
-    """Tiny GRU (hidden=16, ~1k params). Early stopping on the last 10% of training windows (time order)."""
+    """Tiny GRU (hidden=16, ~1k params). Early stopping on the last 10% of training windows (time order, after a gap)."""
 
     name = "gru"
 
     def __init__(self, seed: int = 0, n_channels: int = 4, hidden: int = 16, epochs: int = 60,
-                 lr: float = 1e-2, patience: int = 8, batch: int = 128, threads: int = 1):
-        self.seed, self.C, self.hidden, self.epochs = seed, n_channels, hidden, epochs
+                 lr: float = 1e-2, patience: int = 8, batch: int = 128, threads: int = 1, gap: int = GAP):
+        self.seed, self.C, self.hidden, self.epochs, self.gap = seed, n_channels, hidden, epochs, gap
         self.lr, self.patience, self.batch, self.threads = lr, patience, batch, threads
 
     def _net(self):
@@ -146,8 +150,8 @@ class GRUDelta(_Scaled):
         self.dmu, self.dsd = d.mean(), d.std() + 1e-8
         Xt = self._tensor(X)
         dt = torch.tensor((d - self.dmu) / self.dsd, dtype=torch.float32)
-        n_val = max(1, int(0.1 * len(Xt)))
-        Xtr, dtr, Xva, dva = Xt[:-n_val], dt[:-n_val], Xt[-n_val:], dt[-n_val:]
+        fit, val = _val_split(len(Xt), gap=self.gap)
+        Xtr, dtr, Xva, dva = Xt[fit], dt[fit], Xt[val], dt[val]
         self.net = self._net()
         opt = torch.optim.Adam(self.net.parameters(), lr=self.lr)
         g = torch.Generator().manual_seed(self.seed)

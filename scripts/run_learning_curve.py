@@ -55,6 +55,8 @@ def main():
         raise SystemExit("horizon must be a multiple of cadence")
     w = ev.make_windows(grid, a.target, chs, a.lags, a.horizon // a.cadence)
     purge = a.horizon + a.lags * a.cadence
+    # windows closer than this many steps share grid points; validation inside a model skips them
+    gap = a.lags + a.horizon // a.cadence
     print(f"{meta.name}: grid={len(grid)} windows={len(w.y)} channels={chs}")
 
     rows = []
@@ -73,7 +75,7 @@ def main():
                 rows.append({**base, "model": name, "seed": 0, **_metrics(w, tr, te, yp, thr, a)})
             for mname in a.models:
                 for seed in range(a.seeds if mname in ("random_forest", "lightgbm", "gru") else 1):
-                    kw = {"n_channels": len(chs)} if mname == "gru" else {}
+                    kw = {"gap": gap, **({"n_channels": len(chs)} if mname == "gru" else {})}
                     model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(w.X[tr], w.y[tr], w.y0[tr]))
                     yp = model.predict(w.X[te], w.y0[te])
                     infer = _infer_ms(model, w.X[te], w.y0[te])

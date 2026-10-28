@@ -48,10 +48,16 @@ class RidgeDelta(_Scaled):
         Xs, d = self._scale(X), y - y0
         if self.alpha is not None:
             self.m = Ridge(alpha=self.alpha).fit(Xs, d)
-        else:
-            cv = TimeSeriesSplit(n_splits=self.cv_splits, gap=self.gap)
-            search = GridSearchCV(Ridge(), {"alpha": ALPHAS}, cv=cv, scoring="neg_mean_absolute_error").fit(Xs, d)
-            self.m, self.alpha_ = search.best_estimator_, search.best_params_["alpha"]
+            return self
+        # very short histories cannot hold cv_splits folds plus gaps: use fewer folds, else the default alpha
+        for k in range(self.cv_splits, 1, -1):
+            if len(Xs) - self.gap - k * (len(Xs) // (k + 1)) > 0 and len(Xs) // (k + 1) >= 5:
+                cv = TimeSeriesSplit(n_splits=k, gap=self.gap)
+                search = GridSearchCV(Ridge(), {"alpha": ALPHAS}, cv=cv, scoring="neg_mean_absolute_error").fit(Xs, d)
+                self.m, self.alpha_ = search.best_estimator_, search.best_params_["alpha"]
+                return self
+        self.alpha_ = 1.0
+        self.m = Ridge(alpha=self.alpha_).fit(Xs, d)
         return self
 
     def predict(self, X, y0):

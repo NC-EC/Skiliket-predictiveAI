@@ -52,7 +52,8 @@ in-sample RMSE ratio is always < 1 (max 0.957); the change y - y0 is heavy-taile
 L2 fit can lose to zero change on MAE. Regularization applied in `models.py` (time-ordered CV alpha for Ridge on MAE,
 RF min_samples_leaf=20, LightGBM 7 leaves + early stopping on the training tail). Median rel_mae on provider1:
 LightGBM ~2.0 -> 1.02-1.07, Ridge 1.46-2.04 -> 1.02-1.19, RF 2.2 -> 1.6-1.7. Nothing beats persistence yet at 15 min.
-Compare models with the median of `rel_mae` across splits, not the mean of MASE.
+Compare models with the median of `rel_mae` across splits, not the mean of MASE. **Cold-start criterion (user decision
+2026-10-28): rel_mae < 1 with the upper 95% block-bootstrap CI bound < 1** (`stats.meets_cold_start`); MASE is secondary.
 
 QUANT/UCI replaced by `adapters/dalton.py` and `adapters/urbino.py` with real-file tests; smoke runs
 `results/smoke_urbino_olivetti.csv` (`--cadence 10 --horizon 30`) and `results/smoke_dalton_H1_41_h{15,30,60}.csv`

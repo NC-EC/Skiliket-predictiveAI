@@ -25,9 +25,10 @@ def bootstrap_ci(values, n_resamples: int = 1000, alpha: float = 0.05, seed: int
     return float(v.mean()), float(lo), float(hi)
 
 
-def meets_cold_start(mase_values, groups=None, **kw) -> bool:
-    """Criterion from the proposal: mean MASE < 1 and the upper 95% CI bound < 1."""
-    m, _, hi = bootstrap_ci(mase_values, groups=groups, **kw)
+def meets_cold_start(rel_mae_values, groups=None, **kw) -> bool:
+    """Criterion from the proposal: mean rel_mae (MAE model / MAE persistence on the same test split) < 1 and the
+    upper bound of its 95% (block) bootstrap CI < 1. Pass split ids as `groups` so seeds of one split stay together."""
+    m, _, hi = bootstrap_ci(rel_mae_values, groups=groups, **kw)
     return m < 1 and hi < 1
 
 

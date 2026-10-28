@@ -10,7 +10,7 @@ SKILIKET project, Tec de Monterrey, team 9 (Modelos Predictivos).
 - [x] SKILIKET adapter, verified against the real Zenodo file (`src/coldstart/adapters/skiliket.py`)
 - [x] Evaluation core: rolling origin with purge, MASE vs persistence, baselines (`src/coldstart/evaluate.py`)
 - [x] Cost measurement: wall/CPU time, memory, model size, inference latency (`src/coldstart/cost.py`)
-- [ ] Adapters for EDIAQI, UCI Air Quality and QUANT (need the real files)
+- [x] Adapters for EDIAQI (22 devices), UCI Air Quality and QUANT, verified against the real files (`src/coldstart/adapters/`). QUANT and UCI have no eCO2/TVOC (covariates only)
 - [x] Models: Ridge, random forest, LightGBM, tiny GRU (~1k params), all predicting change vs persistence (`src/coldstart/models.py`)
 - [x] Alert evaluation: percentile threshold, recall, false alarms/day, lead time (`src/coldstart/alerts.py`)
 - [x] Statistics: block bootstrap CI, cold-start criterion, Diebold-Mariano (`src/coldstart/stats.py`)

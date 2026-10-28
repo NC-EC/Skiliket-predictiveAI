@@ -27,18 +27,25 @@ The user speaks Spanish; reply in Spanish. Code, comments and the paper are in E
 ## Datasets
 | Dataset | Source | License | Notes |
 |---|---|---|---|
-| EDIAQI indoor | Zenodo record 14763137 | CC BY 4.0 | 6 low-cost providers, TVOC (MOx), 5 s-5 min, 11-31 Oct 2024, labeled events JSON. Main dataset for alerts. Leave-one-device-out and leave-one-event-out. |
-| QUANT | Zenodo record 10775692 | CC BY 4.0 | 49 commercial devices, CO2 but **no TVOC**, hourly CSV / minute NetCDF, 2019-2022. Leave-one-device-out. |
-| UCI Air Quality | UCI id 360 | research use | Hourly, 9,358 rows 2004-2005, `-200` = missing (treat as invalid, drop). No eCO2/TVOC: map only what exists and document it. |
+| EDIAQI indoor | Zenodo record 14763137 | CC BY 4.0 | One house in Zagreb, 11-31 Oct 2024. 22 devices (providers 1-6, some multi-unit, plus a reference instrument), 5 s-10 min. Local Zagreb wall clock; the DST hour 2024-10-27 02:00-03:00 is dropped. TVOC in ppb only for providers 1, 3, 4 (ppm x1000), 6. **No labeled-events JSON** in this record (only People/Door/Motion logs). Main dataset for alerts. Leave-one-device-out. |
+| QUANT | Zenodo record 10775692 | CC BY 4.0 | 49 commercial devices at outdoor UK urban sites, hourly CSV only, 2019-2022. **No CO2 and no TVOC** (checked in the real file): only temp/RH map. Cannot be a target dataset. |
+| UCI Air Quality | UCI id 360 | research use | Outdoor, hourly, 9,357 rows 2004-2005, `-200` = missing (invalid, drop). No eCO2/TVOC: only temp/RH map. |
 | SKILIKET | Zenodo (team) | CC BY 4.0 | Reference for channels/units; adapter done and verified. |
 
+## Environment (user's PC, Windows)
+The only system Python is MSYS2's, which cannot install torch/lightgbm wheels. Use the uv-managed venv:
+`uv venv --python 3.12 .venv`, then `uv pip install --python .venv\Scripts\python.exe -e ".[dev,models]"` (CPU torch from
+`https://download.pytorch.org/whl/cpu`). Run everything with `.venv\Scripts\python.exe`.
+
+## Done (2026-10-28)
+Install + pytest; `download_datasets.sh` verified and now fetches/unzips everything; adapters `ediaqi.py` (per-device,
+`load(path, device)` / `load_all(path)`), `quant.py` (same API), `uci_air_quality.py`, with real-file tests; `--device` in the
+runner; smoke run on EDIAQI `provider1` (`results/smoke_ediaqi_provider1.csv`). Coarse devices use a max gap of
+max(5 min, 1.5 x native step), mirroring `evaluate.to_grid`.
+
 ## CURRENT TASK (on the user's PC)
-1. `pip install -e ".[dev,models]"` and run `pytest`.
-2. Run `scripts/download_datasets.sh` (URLs are unverified, so fix them if needed). Read each `record.json`, download the data files it lists into `data/raw/<dataset>/`, and report file names, sizes and the first rows/columns of each.
-3. Write `src/coldstart/adapters/ediaqi.py`, `quant.py` and `uci_air_quality.py` **against the real files**, following `skiliket.py`. Multi-device datasets: return a `device_id` column in addition to the canonical columns (or a dict of per-device frames; extend `schema.py` if needed and keep tests passing). Set `verified_against_real_file=True`.
-4. Add a real-file test per adapter (skipped when the file is absent) that checks row counts, value ranges and units.
-5. Smoke-run `run_learning_curve.py` on one EDIAQI device, then commit and push.
-6. Afterwards: measure timing inside Docker with `--cpus 1|2 --memory 1g|2g` on this PC (Ryzen 5 5500 = timing reference).
+1. Investigate why Ridge / RF / LightGBM score MASE ~2-3 on the EDIAQI provider1 smoke run (persistence ~1.2) before trusting any run.
+2. Measure timing inside Docker with `--cpus 1|2 --memory 1g|2g` on this PC (Ryzen 5 5500 = timing reference).
 
 ## Open decisions (ask the user, don't assume)
-Sensor model / time zone / device ID of SKILIKET kits; zero-shot pretrained model (Chronos vs TimesFM, check license and size); false-alarm budget; publication venue.
+Sensor model / time zone / device ID of SKILIKET kits; whether to keep QUANT and UCI (no target channel, outdoor) or replace them with an indoor eCO2/TVOC dataset; zero-shot pretrained model (Chronos vs TimesFM, check license and size); false-alarm budget; publication venue.

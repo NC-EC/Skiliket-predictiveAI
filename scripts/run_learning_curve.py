@@ -42,8 +42,9 @@ def main():
     p.add_argument("--models", nargs="+", default=["ridge", "huber", "random_forest", "lightgbm", "gru"])
     p.add_argument("--seeds", type=int, default=3)
     p.add_argument("--alert-q", type=float, default=90)
-    p.add_argument("--common-test", action="store_true",
-                   help="test every train length on the same days (those available for the largest --days)")
+    p.add_argument("--common-test", action=argparse.BooleanOptionalAction, default=True,
+                   help="test every train length on the same days (those available for the largest --days); "
+                        "--no-common-test for quick smoke checks")
     p.add_argument("--calendar", action=argparse.BooleanOptionalAction, default=True,
                    help="add hour-of-day sin/cos and a weekend flag (from the origin time) to the learned models' inputs")
     p.add_argument("--out", required=True)
@@ -74,7 +75,7 @@ def main():
             t_end = w.t_target[tr].max()
             tr = tr[w.t0[tr] >= t_end - np.timedelta64(int(D * 86400), "s")]
             thr = percentile_threshold(w.y[tr], a.alert_q)
-            base = {"dataset": a.dataset, "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
+            base = {"dataset": a.dataset, "device": a.device or "", "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
                     "calendar": a.calendar, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
                     "test_start": str(w.t0[te].min()), "host": platform.machine()}
             # baselines (seed-independent)
@@ -82,13 +83,13 @@ def main():
             for name, yp in preds.items():
                 rows.append({**base, "model": name, "seed": 0, **_metrics(w, tr, te, yp, thr, a)})
             for mname in a.models:
-                for seed in range(a.seeds if mname in ("random_forest", "lightgbm", "gru") else 1):
+                for seed in range(a.seeds if mname in ("random_forest", "lightgbm", "gru", "policy") else 1):
                     kw = {"gap": gap, **({"n_channels": len(chs), "n_static": n_static} if mname == "gru" else {})}
                     model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(X[tr], w.y[tr], w.y0[tr]))
                     yp = model.predict(X[te], w.y0[te])
                     infer = _infer_ms(model, X[te], w.y0[te])
                     rows.append({**base, "model": mname, "seed": seed, **_metrics(w, tr, te, yp, thr, a),
-                                 **cost.asdict(), "infer_ms": infer})
+                                 **cost.asdict(), "infer_ms": infer, "policy_choice": getattr(model, "choice_", "")})
             print(f"D={D} split={split} done")
     out = pd.DataFrame(rows)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)

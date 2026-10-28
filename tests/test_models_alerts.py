@@ -82,3 +82,11 @@ def test_models_accept_gap(name):
     kw = {"n_channels": 2, "epochs": 2} if name == "gru" else {}
     m = REGISTRY[name](seed=0, gap=18, **kw).fit(X, y, y0)
     assert np.isfinite(m.predict(X[:5], y0[:5])).all()
+
+
+def test_lightgbm_refits_on_all_windows_with_best_iteration():
+    X, y, y0 = _data(600)
+    m = REGISTRY["lightgbm"](seed=0, gap=18).fit(X, y, y0)
+    assert 1 <= m.best_iteration_ <= 300
+    assert m.m.booster_.num_trees() == m.best_iteration_
+    assert m.n_fit_ == 600

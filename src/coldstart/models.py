@@ -5,8 +5,9 @@ back, so an untrained/zero model reduces to persistence. Inputs are standardized
 training statistics only.
 
 Small-data regularization (cold start means a few hundred windows): every choice uses the training windows only,
-in time order. Ridge picks alpha by time-ordered CV on MAE, the forest uses large leaves, LightGBM stops early on
-the last 10% of training windows. The change y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
+in time order. Ridge picks alpha by time-ordered CV on MAE, the forest uses large leaves, LightGBM picks the number
+of trees by early stopping on the last 10% of training windows, then refits on all of them. The change
+y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
 
 Model(seed).fit(X, y, y0) -> self ; .predict(X, y0) -> y_hat
 X has shape (n, n_lags * n_channels), channels interleaved per lag (see evaluate.make_windows).
@@ -101,8 +102,14 @@ class LGBMDelta:
 
         d = y - y0
         fit, val = _val_split(len(X), gap=self.gap)
-        self.m.fit(X[fit], d[fit], eval_X=X[val], eval_y=d[val], eval_metric="l1",
-                   callbacks=[lgb.early_stopping(self.patience, first_metric_only=True, verbose=False)])
+        probe = lgb.LGBMRegressor(**self.m.get_params())
+        probe.fit(X[fit], d[fit], eval_X=X[val], eval_y=d[val], eval_metric="l1",
+                  callbacks=[lgb.early_stopping(self.patience, first_metric_only=True, verbose=False)])
+        # the tail is the most recent (most relevant) history: refit on all windows with the chosen number of trees
+        self.best_iteration_ = probe.best_iteration_ or probe.n_estimators
+        self.m.set_params(n_estimators=self.best_iteration_)
+        self.m.fit(X, d)
+        self.n_fit_ = len(X)
         return self
 
     def predict(self, X, y0):

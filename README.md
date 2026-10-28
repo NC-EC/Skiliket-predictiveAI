@@ -11,7 +11,7 @@ SKILIKET project, Tec de Monterrey, team 9 (Modelos Predictivos).
 - [x] Evaluation core: rolling origin with purge, MASE vs persistence, baselines (`src/coldstart/evaluate.py`)
 - [x] Cost measurement: wall/CPU time, memory, model size, inference latency (`src/coldstart/cost.py`)
 - [x] Adapter for EDIAQI (22 devices), verified against the real files (`src/coldstart/adapters/`)
-- [ ] Adapters for DALTON (30 indoor sites, CO2 + VOC, activity annotations) and Urbino classrooms (CO2, one year). QUANT and UCI were dropped (outdoor, no CO2/TVOC)
+- [x] Adapters for DALTON (68 devices, CO2 + VOC, activity annotations; authors' gap-fill partly undetectable, see `dalton.py`) and Urbino classrooms (CO2, one year). QUANT and UCI were dropped (outdoor, no CO2/TVOC)
 - [x] Models: Ridge, random forest, LightGBM, tiny GRU (~1k params), all predicting change vs persistence (`src/coldstart/models.py`)
 - [x] Alert evaluation: percentile threshold, recall, false alarms/day, lead time (`src/coldstart/alerts.py`)
 - [x] Statistics: block bootstrap CI, cold-start criterion, Diebold-Mariano (`src/coldstart/stats.py`)

@@ -6,6 +6,8 @@ every (D, origin) pair is a replicate. Writes one CSV row per (model, seed, D, s
 Example:
   python scripts/run_learning_curve.py --dataset skiliket --path data/raw/skiliket_zenodo_17398551.xlsx \
       --target eco2 --cadence 5 --horizon 15 --days 1 2 3 --seeds 3 --out results/smoke_skiliket.csv
+  python scripts/run_learning_curve.py --dataset ediaqi --path data/raw/ediaqi --device provider1 \
+      --target eco2 --cadence 5 --horizon 15 --days 1 2 3 --seeds 3 --out results/smoke_ediaqi_provider1.csv
 """
 from __future__ import annotations
 
@@ -30,6 +32,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--dataset", required=True, help="adapter module name in coldstart.adapters")
     p.add_argument("--path", required=True)
+    p.add_argument("--device", help="device id for multi-device datasets (e.g. ediaqi provider1, quant AP1_1_Manchester)")
     p.add_argument("--target", default="eco2")
     p.add_argument("--cadence", type=int, default=5)
     p.add_argument("--horizon", type=int, default=15, help="minutes")
@@ -43,8 +46,10 @@ def main():
     a = p.parse_args()
 
     adapter = importlib.import_module(f"coldstart.adapters.{a.dataset}")
-    df, meta, rep = adapter.load(a.path)
-    chs = [a.target] + [c for c in CHANNELS if c != a.target and df[c].notna().all()]
+    df, meta, rep = adapter.load(a.path, a.device) if a.device else adapter.load(a.path)
+    if df[a.target].isna().all():
+        raise SystemExit(f"{meta.name} has no '{a.target}' channel")
+    chs =[a.target] + [c for c in CHANNELS if c != a.target and df[c].notna().all()]
     grid = ev.to_grid(df, a.cadence, chs)
     if a.horizon % a.cadence:
         raise SystemExit("horizon must be a multiple of cadence")

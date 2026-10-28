@@ -115,3 +115,19 @@ def test_gru_takes_static_calendar_columns():
     m = REGISTRY["gru"](seed=0, n_channels=2, n_static=3, epochs=2).fit(Xc, y, y0)
     assert m._tensor(Xc[:4]).shape == (4, 6, 5)
     assert np.isfinite(m.predict(Xc[:4], y0[:4])).all()
+
+
+def test_policy_picks_a_model_on_ar_and_persistence_on_random_walk():
+    X, y, y0 = _data(600)
+    m = REGISTRY["policy"](seed=0, gap=18).fit(X, y, y0)
+    assert m.choice_ in ("ridge", "huber", "lightgbm") and m.tail_rel_mae_[m.choice_] < 1
+    # pure random walk (synthetic, test only): the change is unpredictable noise, so no candidate should win the tail
+    rng = np.random.default_rng(1)
+    s = np.cumsum(rng.normal(size=700))
+    Xr = np.stack([s[i : i + 6] for i in range(600)])
+    y0r, yr = s[5:605], s[8:608]
+    mr = REGISTRY["policy"](seed=0, gap=9).fit(Xr, yr, y0r)
+    if mr.choice_ == "persistence":
+        assert np.array_equal(mr.predict(Xr[:5], y0r[:5]), y0r[:5])
+    else:  # a candidate may win the tail by chance; it must have done so on the tail
+        assert mr.tail_rel_mae_[mr.choice_] < 1

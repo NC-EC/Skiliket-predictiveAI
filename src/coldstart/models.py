@@ -252,4 +252,35 @@ class GRUDelta(_Scaled):
         return st
 
 
-REGISTRY = {"ridge": RidgeDelta, "huber": HuberDelta, "random_forest": ForestDelta, "lightgbm": LGBMDelta, "gru": GRUDelta}
+class PolicyDelta:
+    """Cold-start policy: what a brand-new kit should run on day N, chosen from its own training data only.
+
+    Each candidate is fit on the head of the training windows and scored on the time-ordered tail (after the same gap)
+    by rel_mae = MAE(model) / MAE(persistence). The best candidate is refit on all windows if it beats persistence
+    there (rel_mae < 1); otherwise the policy predicts persistence (zero change)."""
+
+    name = "policy"
+    CANDIDATES = ("ridge", "huber", "lightgbm")
+
+    def __init__(self, seed: int = 0, gap: int = GAP, tail_frac: float = 0.2, candidates=CANDIDATES):
+        self.seed, self.gap, self.tail_frac, self.candidates = seed, gap, tail_frac, candidates
+
+    def fit(self, X, y, y0):
+        fit, val = _val_split(len(X), frac=self.tail_frac, gap=self.gap)
+        base = np.mean(np.abs(y[val] - y0[val]))
+        self.tail_rel_mae_ = {}
+        for name in self.candidates:
+            m = REGISTRY[name](seed=self.seed, gap=self.gap).fit(X[fit], y[fit], y0[fit])
+            self.tail_rel_mae_[name] = float(np.mean(np.abs(y[val] - m.predict(X[val], y0[val]))) / max(base, 1e-12))
+        best = min(self.tail_rel_mae_, key=self.tail_rel_mae_.get)
+        self.choice_ = best if self.tail_rel_mae_[best] < 1 else "persistence"
+        self.m = None if self.choice_ == "persistence" else REGISTRY[best](seed=self.seed, gap=self.gap).fit(X, y, y0)
+        return self
+
+    def predict(self, X, y0):
+        return y0.astype(float) if self.m is None else self.m.predict(X, y0)
+
+
+REGISTRY = {"ridge": RidgeDelta, "huber": HuberDelta,
+            "random_forest": ForestDelta, "lightgbm": LGBMDelta, "gru": GRUDelta,
+            "policy": PolicyDelta}

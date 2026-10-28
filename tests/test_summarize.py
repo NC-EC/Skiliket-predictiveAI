@@ -3,6 +3,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 
 _spec = importlib.util.spec_from_file_location("summarize", Path(__file__).parents[1] / "scripts/summarize.py")
 summarize = importlib.util.module_from_spec(_spec)
@@ -20,7 +21,8 @@ def synthetic_runs(tmp_path):
                     "split": split}
             rows.append({**base, "model": "persistence", "seed": 0, "rel_mae": 1.0})
             for seed in range(3):
-                rows.append({**base, "model": "good", "seed": seed, "rel_mae": good_level + rng.normal(0, 0.02)})
+                rows.append({**base, "model": "good", "seed": seed, "rel_mae": good_level + rng.normal(0, 0.02),
+                             "wall_s": 0.1 * D, "peak_py_mb": 1.0 + seed, "parallel": 5})
             rows.append({**base, "model": "flat", "seed": 0, "rel_mae": 1.0 + (0.1 if split % 2 else -0.1)})
     path = tmp_path / "synthetic_run.csv"
     pd.DataFrame(rows).to_csv(path, index=False)
@@ -34,6 +36,7 @@ def test_cells_and_d_star(tmp_path):
     assert good.loc[1, "pct_splits_won"] == 0 and good.loc[3, "pct_splits_won"] == 100
     assert not good.loc[1, "meets_cold_start"] and good.loc[3, "meets_cold_start"]
     assert good.loc[3, "ci_lo"] <= good.loc[3, "mean_rel_mae"] <= good.loc[3, "ci_hi"]
+    assert good.loc[7, "train_s"] == pytest.approx(0.7) and good.loc[7, "peak_py_mb"] == 2.0 and good.loc[7, "parallel"] == 5
     flat = cells[cells.model == "flat"]
     assert flat["pct_splits_won"].eq(50).all() and not flat["meets_cold_start"].any()
 

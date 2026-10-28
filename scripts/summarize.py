@@ -3,6 +3,10 @@
 D* = the smallest training length D that meets the cold-start criterion (stats.meets_cold_start: mean rel_mae < 1 and
 upper 95% block-bootstrap CI bound < 1, splits as blocks so the seeds of one split stay together). NaN if no D meets it.
 
+Cost columns are medians over the cell: train_s (wall time of one fit), peak_py_mb (tracemalloc peak during the fit:
+the memory figure for the paper, not the process RSS, which is dominated by loading the data), infer_ms per window,
+model_bytes. They are timing only when the run had parallel == 1.
+
 Example:
   python scripts/summarize.py results/runs/dalton_*.csv --out results/summary_dalton
   -> results/summary_dalton_cells.csv, results/summary_dalton_dstar.csv
@@ -19,6 +23,7 @@ import pandas as pd
 from coldstart.stats import bootstrap_ci
 
 KEYS = ["dataset", "device", "target", "horizon_min", "model"]
+COST = {"wall_s": "train_s", "peak_py_mb": "peak_py_mb", "infer_ms": "infer_ms", "model_bytes": "model_bytes"}
 
 
 def load(paths: list[str]) -> pd.DataFrame:
@@ -44,7 +49,9 @@ def summarize_cells(df: pd.DataFrame, n_resamples: int = 1000) -> pd.DataFrame:
                      "median_rel_mae": float(g["rel_mae"].median()),
                      "mean_rel_mae": mean, "ci_lo": lo, "ci_hi": hi,
                      "pct_splits_won": float(100 * (per_split < 1).mean()),
-                     "meets_cold_start": bool(mean < 1 and hi < 1)})
+                     "meets_cold_start": bool(mean < 1 and hi < 1),
+                     **{new: float(g[c].median()) if c in g else np.nan for c, new in COST.items()},
+                     "parallel": float(g["parallel"].max()) if "parallel" in g else np.nan})
     return pd.DataFrame(rows)
 
 

@@ -1,0 +1,29 @@
+# Experiment configuration. Values marked TODO are open decisions (see proposal checklist).
+seed: 0
+n_seeds: 10
+
+grid:
+  cadence_minutes: [1, 5, 15, 60]   # experimental factor, obtained by resampling
+  max_gap_minutes: 5                # gaps longer than this split a series into segments (no imputation)
+
+targets: [eco2, tvoc, aqi]
+covariates: [temp_c, rh_pct]
+horizons_minutes: [15, 30, 60]
+
+evaluation:
+  scheme: rolling_origin_growing_window
+  purge: horizon_plus_lag_window    # embargo between train end and test start
+  cold_start_criterion: "MASE < 1 and 95% CI upper bound < 1"
+  bootstrap_resamples: 1000
+
+alerts:
+  threshold: per_device_percentile  # computed on training data only
+  percentiles: [90, 95]
+  guideline_sensitivity: true
+  false_alarm_budget_per_day: 1     # TODO confirm
+  target_recall: 0.80               # TODO confirm
+
+edge_simulation:
+  cpus: [1, 2]
+  memory_gb: [1, 2]
+  note: "Applied with docker --cpus/--memory on the Ryzen PC (timing reference); M1 is a cross-check."

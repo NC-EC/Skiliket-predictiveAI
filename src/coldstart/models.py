@@ -8,6 +8,8 @@ Small-data regularization (cold start means a few hundred windows): every choice
 in time order. Ridge picks alpha and Huber epsilon by time-ordered CV on MAE, the forest uses large leaves,
 LightGBM picks the number of trees by early stopping on the last 10% of training windows, then refits on all of
 them. The change y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
+Every predicted change is clipped to the [p1, p99] range of the training changes, so one wild extrapolation
+cannot dominate a test day.
 
 Model(seed).fit(X, y, y0) -> self ; .predict(X, y0) -> y_hat
 X has shape (n, n_lags * n_channels), channels interleaved per lag (see evaluate.make_windows).
@@ -43,7 +45,32 @@ def _time_cv_search(est, grid: dict, X, d, cv_splits: int, gap: int):
     return None
 
 
-class _Scaled:
+CLIP_Q = (1.0, 99.0)  # percentiles of the training changes y - y0 that bound every predicted change
+
+
+class _ChangeModel:
+    """Shared output step: y_hat = y0 + clip(predicted change, training [p1, p99]).
+
+    `cv_rel_mae_` is the model's own time-ordered validation score, MAE(model) / MAE(persistence) on the same
+    validation windows, left NaN when a history is too short to validate; the cold-start policy reads it."""
+
+    clip = True
+    cv_rel_mae_ = float("nan")
+
+    def _set_clip(self, d):
+        self.d_lo, self.d_hi = np.percentile(d, CLIP_Q) if self.clip else (-np.inf, np.inf)
+
+    def _out(self, y0, d_hat):
+        return y0 + np.clip(d_hat, self.d_lo, self.d_hi)
+
+
+def _cv_rel_mae(search, X, d) -> float:
+    """Best CV MAE of a GridSearchCV over the mean persistence (zero change) MAE on the same validation folds."""
+    base = np.mean([np.mean(np.abs(d[val])) for _, val in search.cv.split(X)])
+    return float(-search.best_score_ / max(base, 1e-12))
+
+
+class _Scaled(_ChangeModel):
     def _fit_scale(self, X):
         self.mu = X.mean(axis=0)
         self.sd = X.std(axis=0) + 1e-8
@@ -61,19 +88,21 @@ class RidgeDelta(_Scaled):
     def fit(self, X, y, y0):
         self._fit_scale(X)
         Xs, d = self._scale(X), y - y0
+        self._set_clip(d)
         if self.alpha is not None:
             self.m = Ridge(alpha=self.alpha).fit(Xs, d)
             return self
         search = _time_cv_search(Ridge(), {"alpha": ALPHAS}, Xs, d, self.cv_splits, self.gap)
         if search is not None:
             self.m, self.alpha_ = search.best_estimator_, search.best_params_["alpha"]
+            self.cv_rel_mae_ = _cv_rel_mae(search, Xs, d)
             return self
         self.alpha_ = 1.0  # too short for CV
         self.m = Ridge(alpha=self.alpha_).fit(Xs, d)
         return self
 
     def predict(self, X, y0):
-        return y0 + self.m.predict(self._scale(X))
+        return self._out(y0, self.m.predict(self._scale(X)))
 
 
 class HuberDelta(_Scaled):
@@ -82,31 +111,34 @@ class HuberDelta(_Scaled):
     name = "huber"
 
     def __init__(self, seed: int = 0, epsilon: float | None = None, alpha: float = 1e-4, cv_splits: int = 5,
-                 gap: int = GAP, max_iter: int = 500):
-        self.epsilon, self.alpha, self.cv_splits, self.gap, self.max_iter = epsilon, alpha, cv_splits, gap, max_iter
+                 gap: int = GAP, max_iter: int = 500, tol: float = 1e-5):
+        self.epsilon, self.alpha, self.cv_splits, self.gap = epsilon, alpha, cv_splits, gap
+        self.max_iter, self.tol = max_iter, tol
 
     def _est(self, epsilon: float = 1.35):
-        return HuberRegressor(epsilon=epsilon, alpha=self.alpha, max_iter=self.max_iter)
+        return HuberRegressor(epsilon=epsilon, alpha=self.alpha, max_iter=self.max_iter, tol=self.tol)
 
     def fit(self, X, y, y0):
         self._fit_scale(X)
         Xs, d = self._scale(X), y - y0
+        self._set_clip(d)
         if self.epsilon is not None:
             self.epsilon_, self.m = self.epsilon, self._est(self.epsilon).fit(Xs, d)
             return self
         search = _time_cv_search(self._est(), {"epsilon": EPSILONS}, Xs, d, self.cv_splits, self.gap)
         if search is not None:
             self.m, self.epsilon_ = search.best_estimator_, search.best_params_["epsilon"]
+            self.cv_rel_mae_ = _cv_rel_mae(search, Xs, d)
             return self
         self.epsilon_ = 1.35  # too short for CV
         self.m = self._est(self.epsilon_).fit(Xs, d)
         return self
 
     def predict(self, X, y0):
-        return y0 + self.m.predict(self._scale(X))
+        return self._out(y0, self.m.predict(self._scale(X)))
 
 
-class ForestDelta:
+class ForestDelta(_ChangeModel):
     name = "random_forest"
 
     def __init__(self, seed: int = 0, n_estimators: int = 100, max_depth: int | None = 8, min_samples_leaf: int = 20,
@@ -116,14 +148,15 @@ class ForestDelta:
                                        random_state=seed, n_jobs=n_jobs)
 
     def fit(self, X, y, y0):
+        self._set_clip(y - y0)
         self.m.fit(X, y - y0)
         return self
 
     def predict(self, X, y0):
-        return y0 + self.m.predict(X)
+        return self._out(y0, self.m.predict(X))
 
 
-class LGBMDelta:
+class LGBMDelta(_ChangeModel):
     name = "lightgbm"
 
     def __init__(self, seed: int = 0, n_estimators: int = 300, num_leaves: int = 7, patience: int = 20,
@@ -139,19 +172,22 @@ class LGBMDelta:
         import lightgbm as lgb
 
         d = y - y0
+        self._set_clip(d)
         fit, val = _val_split(len(X), gap=self.gap)
         probe = lgb.LGBMRegressor(**self.m.get_params())
         probe.fit(X[fit], d[fit], eval_X=X[val], eval_y=d[val], eval_metric="l1",
                   callbacks=[lgb.early_stopping(self.patience, first_metric_only=True, verbose=False)])
         # the tail is the most recent (most relevant) history: refit on all windows with the chosen number of trees
         self.best_iteration_ = probe.best_iteration_ or probe.n_estimators
+        # the early-stopping tail is LightGBM's time-ordered validation: its score there vs persistence
+        self.cv_rel_mae_ = float(probe.best_score_["valid_0"]["l1"] / max(np.mean(np.abs(d[val])), 1e-12))
         self.m.set_params(n_estimators=self.best_iteration_)
         self.m.fit(X, d)
         self.n_fit_ = len(X)
         return self
 
     def predict(self, X, y0):
-        return y0 + self.m.predict(X)
+        return self._out(y0, self.m.predict(X))
 
 
 class GRUDelta(_Scaled):
@@ -202,6 +238,7 @@ class GRUDelta(_Scaled):
         torch.set_num_threads(self.threads)
         self._fit_scale(X)
         d = y - y0
+        self._set_clip(d)
         self.dmu, self.dsd = d.mean(), d.std() + 1e-8
         Xt = self._tensor(X)
         dt = torch.tensor((d - self.dmu) / self.dsd, dtype=torch.float32)
@@ -240,7 +277,7 @@ class GRUDelta(_Scaled):
         self.net.eval()
         with torch.no_grad():
             d = self.net(self._tensor(X)).numpy()
-        return y0 + d * self.dsd + self.dmu
+        return self._out(y0, d * self.dsd + self.dmu)
 
     def n_params(self) -> int:
         return sum(p.numel() for p in self.net.parameters())
@@ -255,26 +292,31 @@ class GRUDelta(_Scaled):
 class PolicyDelta:
     """Cold-start policy: what a brand-new kit should run on day N, chosen from its own training data only.
 
-    Each candidate is fit on the head of the training windows and scored on the time-ordered tail (after the same gap)
-    by rel_mae = MAE(model) / MAE(persistence). The best candidate is refit on all windows if it beats persistence
-    there (rel_mae < 1); otherwise the policy predicts persistence (zero change)."""
+    No extra training: each candidate is fit as usual and brings its own time-ordered validation score, cv_rel_mae_ =
+    MAE(model) / MAE(persistence) on its validation windows (ridge and huber: their hyperparameter CV folds; LightGBM:
+    its early-stopping tail). The candidate with the lowest score is used if it beats persistence there (< 1);
+    otherwise the policy predicts persistence. A candidate without a score (history too short to validate) never wins.
+    The runner passes the candidates it already fit (from_fitted), so the policy costs nothing beyond them."""
 
     name = "policy"
     CANDIDATES = ("ridge", "huber", "lightgbm")
 
-    def __init__(self, seed: int = 0, gap: int = GAP, tail_frac: float = 0.2, candidates=CANDIDATES):
-        self.seed, self.gap, self.tail_frac, self.candidates = seed, gap, tail_frac, candidates
+    def __init__(self, seed: int = 0, gap: int = GAP, candidates=CANDIDATES):
+        self.seed, self.gap, self.candidates = seed, gap, candidates
 
     def fit(self, X, y, y0):
-        fit, val = _val_split(len(X), frac=self.tail_frac, gap=self.gap)
-        base = np.mean(np.abs(y[val] - y0[val]))
-        self.tail_rel_mae_ = {}
-        for name in self.candidates:
-            m = REGISTRY[name](seed=self.seed, gap=self.gap).fit(X[fit], y[fit], y0[fit])
-            self.tail_rel_mae_[name] = float(np.mean(np.abs(y[val] - m.predict(X[val], y0[val]))) / max(base, 1e-12))
-        best = min(self.tail_rel_mae_, key=self.tail_rel_mae_.get)
-        self.choice_ = best if self.tail_rel_mae_[best] < 1 else "persistence"
-        self.m = None if self.choice_ == "persistence" else REGISTRY[best](seed=self.seed, gap=self.gap).fit(X, y, y0)
+        return self._choose({n: REGISTRY[n](seed=self.seed, gap=self.gap).fit(X, y, y0) for n in self.candidates})
+
+    @classmethod
+    def from_fitted(cls, fitted: dict) -> "PolicyDelta":
+        return cls(candidates=tuple(fitted))._choose(fitted)
+
+    def _choose(self, fitted: dict):
+        self.cv_rel_mae_ = {n: m.cv_rel_mae_ for n, m in fitted.items()}
+        scored = {n: v for n, v in self.cv_rel_mae_.items() if np.isfinite(v)}
+        best = min(scored, key=scored.get) if scored else None
+        self.choice_ = best if best is not None and scored[best] < 1 else "persistence"
+        self.m = fitted.get(self.choice_)
         return self
 
     def predict(self, X, y0):

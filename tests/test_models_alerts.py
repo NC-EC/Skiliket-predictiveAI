@@ -117,17 +117,37 @@ def test_gru_takes_static_calendar_columns():
     assert np.isfinite(m.predict(Xc[:4], y0[:4])).all()
 
 
-def test_policy_picks_a_model_on_ar_and_persistence_on_random_walk():
+def test_policy_picks_by_validation_scores_without_refitting():
     X, y, y0 = _data(600)
-    m = REGISTRY["policy"](seed=0, gap=18).fit(X, y, y0)
-    assert m.choice_ in ("ridge", "huber", "lightgbm") and m.tail_rel_mae_[m.choice_] < 1
-    # pure random walk (synthetic, test only): the change is unpredictable noise, so no candidate should win the tail
-    rng = np.random.default_rng(1)
-    s = np.cumsum(rng.normal(size=700))
-    Xr = np.stack([s[i : i + 6] for i in range(600)])
-    y0r, yr = s[5:605], s[8:608]
-    mr = REGISTRY["policy"](seed=0, gap=9).fit(Xr, yr, y0r)
-    if mr.choice_ == "persistence":
-        assert np.array_equal(mr.predict(Xr[:5], y0r[:5]), y0r[:5])
-    else:  # a candidate may win the tail by chance; it must have done so on the tail
-        assert mr.tail_rel_mae_[mr.choice_] < 1
+    fitted = {n: REGISTRY[n](seed=0, gap=18).fit(X, y, y0) for n in ("ridge", "huber", "lightgbm")}
+    # mean-reverting AR(0.9): every candidate validates below persistence
+    assert all(0 < m.cv_rel_mae_ < 1 for m in fitted.values())
+    p = REGISTRY["policy"].from_fitted(fitted)
+    assert p.choice_ == min(p.cv_rel_mae_, key=p.cv_rel_mae_.get)
+    assert p.m is fitted[p.choice_]  # the already-fit model, not a refit copy
+    assert np.array_equal(p.predict(X[:5], y0[:5]), fitted[p.choice_].predict(X[:5], y0[:5]))
+
+
+def test_policy_falls_back_to_persistence():
+    X, y, y0 = _data(300)
+    fitted = {n: REGISTRY[n](seed=0, gap=18).fit(X, y, y0) for n in ("ridge", "huber")}
+    fitted["ridge"].cv_rel_mae_, fitted["huber"].cv_rel_mae_ = 1.05, float("nan")  # loses / too short to validate
+    p = REGISTRY["policy"].from_fitted(fitted)
+    assert p.choice_ == "persistence" and p.m is None
+    assert np.array_equal(p.predict(X[:5], y0[:5]), y0[:5])
+
+
+@pytest.mark.parametrize("name", ["ridge", "huber", "random_forest", "lightgbm", "gru"])
+def test_predicted_change_is_clipped_to_training_range(name):
+    X, y, y0 = _data(400)
+    kw = {"n_channels": 2, "epochs": 2} if name == "gru" else {}
+    m = REGISTRY[name](seed=0, gap=18, **kw).fit(X, y, y0)
+    lo, hi = np.percentile(y - y0, [1, 99])
+    assert (m.d_lo, m.d_hi) == (lo, hi)
+    # inputs far outside the training range would extrapolate a huge change without the clip
+    d = m.predict(X[:20] * 50, y0[:20]) - y0[:20]
+    assert (d >= lo - 1e-9).all() and (d <= hi + 1e-9).all()
+
+
+def test_huber_tol_is_passed_to_the_solver():
+    assert REGISTRY["huber"](tol=1e-3)._est().tol == 1e-3

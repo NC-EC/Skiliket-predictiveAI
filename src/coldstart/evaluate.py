@@ -102,21 +102,25 @@ def rolling_origin(
     purge_minutes: float,
     step_days: float | None = None,
     start: np.datetime64 | None = None,
+    first_origin_days: float | None = None,
 ) -> Iterator[tuple[np.ndarray, np.ndarray]]:
     """Yield (train_idx, test_idx) with a growing window anchored at `start`.
 
     The first split trains on `train_days` of data; each next origin advances by `step_days`
     (default = test_days). Test windows begin `purge_minutes` after the train end (by target time of
-    train windows, which is what overlaps).
+    train windows, which is what overlaps). With `first_origin_days` (e.g. the largest train length of a learning
+    curve) the first origin is moved there, so every train length is tested on the same days.
     """
     if len(w.t0) == 0:
         return
     step_days = test_days if step_days is None else step_days
     t_start = w.t0.min() if start is None else start
     t_last = w.t_target.max()
-    day = np.timedelta64(1, "D")
     purge = np.timedelta64(int(purge_minutes * 60), "s")
     origin = t_start + np.timedelta64(int(train_days * 86400), "s")
+    if first_origin_days is not None:
+        # common test days across train lengths: no origin before the one the largest train length allows
+        origin = max(origin, t_start + np.timedelta64(int(first_origin_days * 86400), "s"))
     while True:
         test_lo = origin + purge
         test_hi = test_lo + np.timedelta64(int(test_days * 86400), "s")

@@ -61,6 +61,21 @@ def test_rolling_origin_no_leakage():
     assert n >= 2
 
 
+
+def test_rolling_origin_common_test_days():
+    df = synth(3000)  # synthetic, code test only
+    df["segment"] = 0
+    w = ev.make_windows(df, "eco2", ["eco2"], n_lags=10, horizon_steps=15)
+    tests = {}
+    for D in (0.25, 0.5):
+        splits = list(ev.rolling_origin(w, D, test_days=0.25, purge_minutes=25, first_origin_days=0.5))
+        tests[D] = [te.tolist() for _, te in splits]
+        assert all(w.t_target[tr].max() < w.t0[te].min() for tr, te in splits)
+    assert tests[0.25] == tests[0.5] and len(tests[0.5]) >= 2
+    # without the option the shorter history starts testing earlier
+    assert len(list(ev.rolling_origin(w, 0.25, 0.25, 25))) > len(tests[0.25])
+
+
 def test_baselines_and_cost():
     df = synth(1000)
     df["segment"] = 0

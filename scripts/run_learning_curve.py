@@ -42,6 +42,8 @@ def main():
     p.add_argument("--models", nargs="+", default=["ridge", "huber", "random_forest", "lightgbm", "gru"])
     p.add_argument("--seeds", type=int, default=3)
     p.add_argument("--alert-q", type=float, default=90)
+    p.add_argument("--common-test", action="store_true",
+                   help="test every train length on the same days (those available for the largest --days)")
     p.add_argument("--calendar", action=argparse.BooleanOptionalAction, default=True,
                    help="add hour-of-day sin/cos and a weekend flag (from the origin time) to the learned models' inputs")
     p.add_argument("--out", required=True)
@@ -66,13 +68,14 @@ def main():
 
     rows = []
     for D in a.days:
-        for split, (tr, te) in enumerate(ev.rolling_origin(w, D, a.test_days, purge, step_days=1.0)):
+        for split, (tr, te) in enumerate(ev.rolling_origin(w, D, a.test_days, purge, step_days=1.0,
+                                                               first_origin_days=max(a.days) if a.common_test else None)):
             # fixed-length history: keep only the last D days before the train end
             t_end = w.t_target[tr].max()
             tr = tr[w.t0[tr] >= t_end - np.timedelta64(int(D * 86400), "s")]
             thr = percentile_threshold(w.y[tr], a.alert_q)
             base = {"dataset": a.dataset, "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
-                    "calendar": a.calendar, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
+                    "calendar": a.calendar, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
                     "test_start": str(w.t0[te].min()), "host": platform.machine()}
             # baselines (seed-independent)
             preds = {"persistence": ev.persistence(w, te), "moving_average": ev.moving_average(w, te, len(chs))}

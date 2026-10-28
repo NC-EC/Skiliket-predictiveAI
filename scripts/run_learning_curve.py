@@ -39,7 +39,7 @@ def main():
     p.add_argument("--lags", type=int, default=6, help="number of lag steps")
     p.add_argument("--days", type=float, nargs="+", default=[1, 2, 3])
     p.add_argument("--test-days", type=float, default=1.0)
-    p.add_argument("--models", nargs="+", default=["ridge", "random_forest", "lightgbm", "gru"])
+    p.add_argument("--models", nargs="+", default=["ridge", "huber", "random_forest", "lightgbm", "gru"])
     p.add_argument("--seeds", type=int, default=3)
     p.add_argument("--alert-q", type=float, default=90)
     p.add_argument("--out", required=True)

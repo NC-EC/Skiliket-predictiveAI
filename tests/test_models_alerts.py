@@ -90,3 +90,20 @@ def test_lightgbm_refits_on_all_windows_with_best_iteration():
     assert 1 <= m.best_iteration_ <= 300
     assert m.m.booster_.num_trees() == m.best_iteration_
     assert m.n_fit_ == 600
+
+
+def test_huber_resists_spikes_that_pull_ridge():
+    """Synthetic heavy-tailed changes (code test only): rare large spikes in the training targets."""
+    X, y, y0 = _data(800)
+    rng = np.random.default_rng(3)
+    y_tr = y[:600].copy()
+    spikes = rng.choice(600, 20, replace=False)
+    y_tr[spikes] += 40  # one-sided, like CO2 bursts: they bias an L2 fit
+    errs = {}
+    for name in ("ridge", "huber"):
+        m = REGISTRY[name](seed=0, gap=9).fit(X[:600], y_tr, y0[:600])
+        errs[name] = np.mean(np.abs(y[600:] - m.predict(X[600:], y0[600:])))
+    from coldstart.models import EPSILONS
+
+    assert m.epsilon_ in EPSILONS
+    assert errs["huber"] < errs["ridge"]

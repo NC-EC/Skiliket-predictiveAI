@@ -5,9 +5,9 @@ back, so an untrained/zero model reduces to persistence. Inputs are standardized
 training statistics only.
 
 Small-data regularization (cold start means a few hundred windows): every choice uses the training windows only,
-in time order. Ridge picks alpha by time-ordered CV on MAE, the forest uses large leaves, LightGBM picks the number
-of trees by early stopping on the last 10% of training windows, then refits on all of them. The change
-y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
+in time order. Ridge picks alpha and Huber epsilon by time-ordered CV on MAE, the forest uses large leaves,
+LightGBM picks the number of trees by early stopping on the last 10% of training windows, then refits on all of
+them. The change y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
 
 Model(seed).fit(X, y, y0) -> self ; .predict(X, y0) -> y_hat
 X has shape (n, n_lags * n_channels), channels interleaved per lag (see evaluate.make_windows).
@@ -16,10 +16,11 @@ from __future__ import annotations
 
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.linear_model import Ridge
+from sklearn.linear_model import HuberRegressor, Ridge
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 
 ALPHAS = np.logspace(-2, 4, 13)
+EPSILONS = [1.1, 1.35, 1.75, 2.5, 4.0]  # Huber threshold in robust-scale units; 1.35 is sklearn's default
 
 
 GAP = 12  # default gap in windows; the runner passes n_lags + horizon_steps
@@ -30,6 +31,16 @@ def _val_split(n: int, frac: float = 0.1, gap: int = GAP) -> tuple[slice, slice]
     (a window spans n_lags + horizon_steps grid steps) do not leak from fit into validation."""
     n_val = max(1, int(frac * n))
     return slice(0, max(1, n - n_val - gap)), slice(n - n_val, n)
+
+
+def _time_cv_search(est, grid: dict, X, d, cv_splits: int, gap: int):
+    """Pick hyperparameters by time-ordered CV on MAE. Very short histories cannot hold cv_splits folds plus gaps:
+    fewer folds are used, and None is returned when not even two fit."""
+    for k in range(cv_splits, 1, -1):
+        if len(X) - gap - k * (len(X) // (k + 1)) > 0 and len(X) // (k + 1) >= 5:
+            cv = TimeSeriesSplit(n_splits=k, gap=gap)
+            return GridSearchCV(est, grid, cv=cv, scoring="neg_mean_absolute_error").fit(X, d)
+    return None
 
 
 class _Scaled:
@@ -53,15 +64,42 @@ class RidgeDelta(_Scaled):
         if self.alpha is not None:
             self.m = Ridge(alpha=self.alpha).fit(Xs, d)
             return self
-        # very short histories cannot hold cv_splits folds plus gaps: use fewer folds, else the default alpha
-        for k in range(self.cv_splits, 1, -1):
-            if len(Xs) - self.gap - k * (len(Xs) // (k + 1)) > 0 and len(Xs) // (k + 1) >= 5:
-                cv = TimeSeriesSplit(n_splits=k, gap=self.gap)
-                search = GridSearchCV(Ridge(), {"alpha": ALPHAS}, cv=cv, scoring="neg_mean_absolute_error").fit(Xs, d)
-                self.m, self.alpha_ = search.best_estimator_, search.best_params_["alpha"]
-                return self
-        self.alpha_ = 1.0
+        search = _time_cv_search(Ridge(), {"alpha": ALPHAS}, Xs, d, self.cv_splits, self.gap)
+        if search is not None:
+            self.m, self.alpha_ = search.best_estimator_, search.best_params_["alpha"]
+            return self
+        self.alpha_ = 1.0  # too short for CV
         self.m = Ridge(alpha=self.alpha_).fit(Xs, d)
+        return self
+
+    def predict(self, X, y0):
+        return y0 + self.m.predict(self._scale(X))
+
+
+class HuberDelta(_Scaled):
+    """Linear model with Huber loss: the change y - y0 is heavy-tailed, and an L2 fit chases the spikes of older days."""
+
+    name = "huber"
+
+    def __init__(self, seed: int = 0, epsilon: float | None = None, alpha: float = 1e-4, cv_splits: int = 5,
+                 gap: int = GAP, max_iter: int = 500):
+        self.epsilon, self.alpha, self.cv_splits, self.gap, self.max_iter = epsilon, alpha, cv_splits, gap, max_iter
+
+    def _est(self, epsilon: float = 1.35):
+        return HuberRegressor(epsilon=epsilon, alpha=self.alpha, max_iter=self.max_iter)
+
+    def fit(self, X, y, y0):
+        self._fit_scale(X)
+        Xs, d = self._scale(X), y - y0
+        if self.epsilon is not None:
+            self.epsilon_, self.m = self.epsilon, self._est(self.epsilon).fit(Xs, d)
+            return self
+        search = _time_cv_search(self._est(), {"epsilon": EPSILONS}, Xs, d, self.cv_splits, self.gap)
+        if search is not None:
+            self.m, self.epsilon_ = search.best_estimator_, search.best_params_["epsilon"]
+            return self
+        self.epsilon_ = 1.35  # too short for CV
+        self.m = self._est(self.epsilon_).fit(Xs, d)
         return self
 
     def predict(self, X, y0):
@@ -204,4 +242,4 @@ class GRUDelta(_Scaled):
         return st
 
 
-REGISTRY = {"ridge": RidgeDelta, "random_forest": ForestDelta, "lightgbm": LGBMDelta, "gru": GRUDelta}
+REGISTRY = {"ridge": RidgeDelta, "huber": HuberDelta, "random_forest": ForestDelta, "lightgbm": LGBMDelta, "gru": GRUDelta}

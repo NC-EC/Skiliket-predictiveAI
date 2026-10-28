@@ -5,13 +5,13 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from coldstart.adapters import ediaqi, quant, uci_air_quality
+from coldstart.adapters import dalton, ediaqi, urbino
 from coldstart.schema import present_channels, validate
 
 RAW = Path(__file__).parents[1] / "data/raw"
 EDIAQI = RAW / "ediaqi"
-UCI = RAW / "uci/AirQualityUCI.csv"
-QUANT = RAW / "quant/QUANT_SensorSystems_hourly.csv"
+DALTON = RAW / "dalton"
+URBINO = RAW / "urbino"
 
 
 def test_validate_accepts_absent_channel_but_not_partial_one():
@@ -68,27 +68,44 @@ class TestEdiaqiReal:
         assert all_devices["provider4_s1"][2]["rows_usable"] == 342112
 
 
-@pytest.mark.skipif(not UCI.exists(), reason="real UCI Air Quality file not present")
-def test_uci_real_file_matches_profile():
-    df, meta, rep = uci_air_quality.load(UCI)
-    assert rep["rows_raw"] == 9357
-    assert rep["invalid_by_reason"] == {"temp_c_missing": 366, "rh_pct_missing": 366}
-    assert rep["rows_usable"] == 8991
-    assert rep["max_gap_minutes"] == 90
-    assert present_channels(df) == ["temp_c", "rh_pct"]
-    assert df["temp_c"].between(-2, 45).all() and df["rh_pct"].between(9, 89).all()
-    assert meta.timezone == "unknown"
+@pytest.mark.skipif(not (DALTON / "Processed/H1").exists(), reason="real DALTON files not present (git lfs)")
+class TestDaltonReal:
+    def test_devices_skip_duplicate(self):
+        devs = dalton.devices(DALTON)
+        assert len(devs) == 68
+        assert "F1_23" in devs and "F2_24" not in devs
+        assert {"H1_41", "H2_11", "H4_11", "R1_51", "C1_25"} <= set(devs)  # ID 11 exists in H2 and H4
 
-
-@pytest.mark.skipif(not QUANT.exists(), reason="real QUANT file not present")
-def test_quant_real_file_matches_profile():
-    res = quant.load_all(QUANT)
-    assert len(res) == 68
-    df, meta, rep = res["AQM389_1_London"]
-    assert rep["rows_raw"] == rep["rows_usable"] == 20157
-    df, meta, rep = res["Zep344_2_Manchester"]  # -81 / 331 degC readings must be gone
-    assert rep["invalid_by_reason"]["temp_c_out_of_range"] == 386
-    for d, (df, meta, _) in res.items():
-        assert present_channels(df) == ["temp_c", "rh_pct"], d
-        assert df["temp_c"].between(-40, 60).all() and (df["rh_pct"] > 0).all() and (df["rh_pct"] <= 100).all()
+    def test_h1_41_profile(self):
+        df, meta, rep = dalton.load(DALTON, "H1_41")
+        assert rep["days"] == 26 and rep["rows_raw"] == 26 * 86400
+        assert rep["rows_usable"] == 2044610
+        assert rep["native_step_s"] == 1
+        assert present_channels(df) == ["eco2", "tvoc", "temp_c", "rh_pct"]
+        assert df["eco2"].between(250, 10000).all() and df["tvoc"].between(0, 1000).all()
+        assert df["temp_c"].between(5, 45).all() and df["rh_pct"].between(5, 100).all()
         assert meta.timezone == "unknown"
+
+    def test_c1_drops_clock_errors_and_smoothing_artifacts(self):
+        df, _, rep = dalton.load(DALTON, "C1_25")
+        assert rep["invalid_by_reason"]["clock_error"] == 2 * 86400  # the two 2028 folders
+        assert df["ts"].max() < pd.Timestamp("2022-10-01")
+        assert (df[["eco2", "temp_c", "rh_pct"]] > 0).all().all()
+        assert df["temp_c"].min() >= 5
+
+    def test_events(self):
+        ev = dalton.load_events(DALTON, "H1")
+        assert len(ev) == 1700 and ev["ts"].is_monotonic_increasing
+        assert set(dalton.load_events(DALTON, "H12")["area"]) == {"Kitchen", "Bedroom"}
+
+
+@pytest.mark.skipif(not (URBINO / "olivetti.csv").exists(), reason="real Urbino files not present")
+def test_urbino_real_files_match_profile():
+    res = urbino.load_all(URBINO)
+    assert {d: r["rows_raw"] for d, (_, _, r) in res.items()} == {"olivetti": 91178, "turing": 87826, "von_neumann": 90111}
+    assert res["turing"][2]["invalid_by_reason"] == {"eco2_sensor_ceiling": 35}
+    for d, (df, meta, rep) in res.items():
+        assert rep["native_step_s"] == 300, d
+        assert present_channels(df) == ["eco2", "temp_c", "rh_pct"], d
+        assert df["eco2"].between(400, 5000, inclusive="left").all(), d
+        assert df["ts"].min() == pd.Timestamp("2024-01-01 00:05") and meta.timezone.startswith("UTC")

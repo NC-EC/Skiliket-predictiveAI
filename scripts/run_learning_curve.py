@@ -32,7 +32,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--dataset", required=True, help="adapter module name in coldstart.adapters")
     p.add_argument("--path", required=True)
-    p.add_argument("--device", help="device id for multi-device datasets (e.g. ediaqi provider1, quant AP1_1_Manchester)")
+    p.add_argument("--device", help="device id for multi-device datasets (e.g. ediaqi provider1, dalton H1_41, urbino olivetti)")
     p.add_argument("--target", default="eco2")
     p.add_argument("--cadence", type=int, default=5)
     p.add_argument("--horizon", type=int, default=15, help="minutes")

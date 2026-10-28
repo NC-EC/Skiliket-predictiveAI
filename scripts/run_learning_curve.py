@@ -12,7 +12,6 @@ Example:
 from __future__ import annotations
 
 import argparse
-import importlib
 import platform
 import time
 from pathlib import Path
@@ -21,11 +20,11 @@ import numpy as np
 import pandas as pd
 
 from coldstart import evaluate as ev
+from coldstart.cache import DEFAULT_DIR, load_grid
 from coldstart.alerts import evaluate_alerts, percentile_threshold
 from coldstart.cost import measure_fit, measure_inference
-from coldstart.models import REGISTRY
-
-CHANNELS = ["eco2", "tvoc", "temp_c", "rh_pct"]
+from coldstart.cost import Cost
+from coldstart.models import REGISTRY, PolicyDelta
 
 
 def main():
@@ -47,15 +46,14 @@ def main():
                         "--no-common-test for quick smoke checks")
     p.add_argument("--calendar", action=argparse.BooleanOptionalAction, default=True,
                    help="add hour-of-day sin/cos and a weekend flag (from the origin time) to the learned models' inputs")
+    p.add_argument("--cache", action=argparse.BooleanOptionalAction, default=True,
+                   help="reuse the gridded series from data/cache/ instead of re-reading the raw files")
+    p.add_argument("--parallel", type=int, default=1,
+                   help="number of runner processes sharing the machine; > 1 means the cost columns are not timing")
     p.add_argument("--out", required=True)
     a = p.parse_args()
 
-    adapter = importlib.import_module(f"coldstart.adapters.{a.dataset}")
-    df, meta, rep = adapter.load(a.path, a.device) if a.device else adapter.load(a.path)
-    if df[a.target].isna().all():
-        raise SystemExit(f"{meta.name} has no '{a.target}' channel")
-    chs =[a.target] + [c for c in CHANNELS if c != a.target and df[c].notna().all()]
-    grid = ev.to_grid(df, a.cadence, chs)
+    grid, chs, name = load_grid(a.dataset, a.path, a.device, a.target, a.cadence, DEFAULT_DIR if a.cache else None)
     if a.horizon % a.cadence:
         raise SystemExit("horizon must be a multiple of cadence")
     w = ev.make_windows(grid, a.target, chs, a.lags, a.horizon // a.cadence)
@@ -65,7 +63,7 @@ def main():
     # learned models get calendar columns appended; baselines keep reading the lag block of w.X
     X = np.hstack([w.X, ev.calendar_features(w.t0)]) if a.calendar else w.X
     n_static = len(ev.CALENDAR) if a.calendar else 0
-    print(f"{meta.name}: grid={len(grid)} windows={len(w.y)} channels={chs} calendar={a.calendar}")
+    print(f"{name}: grid={len(grid)} windows={len(w.y)} channels={chs} calendar={a.calendar}")
     # train lengths this device can hold (D days of training plus one test period); with --common-test the largest
     # of these sets the first origin, so a short device keeps its feasible lengths instead of losing every split
     span_days = (w.t_target.max() - w.t0.min()) / np.timedelta64(1, "D") if len(w.y) else 0.0
@@ -73,7 +71,7 @@ def main():
     if days != list(a.days):
         print(f"span {span_days:.1f} days: train lengths {sorted(set(a.days) - set(days))} skipped")
     if not days:
-        raise SystemExit(f"{meta.name}: {span_days:.1f} days of windows, too short for any --days")
+        raise SystemExit(f"{name}: {span_days:.1f} days of windows, too short for any --days")
 
     rows = []
     for D in days:
@@ -85,15 +83,24 @@ def main():
             thr = percentile_threshold(w.y[tr], a.alert_q)
             base = {"dataset": a.dataset, "device": a.device or "", "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
                     "calendar": a.calendar, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
-                    "test_start": str(w.t0[te].min()), "host": platform.machine()}
+                    "test_start": str(w.t0[te].min()), "host": platform.machine(), "parallel": a.parallel}
             # baselines (seed-independent)
             preds = {"persistence": ev.persistence(w, te), "moving_average": ev.moving_average(w, te, len(chs))}
             for name, yp in preds.items():
                 rows.append({**base, "model": name, "seed": 0, **_metrics(w, tr, te, yp, thr, a)})
-            for mname in a.models:
+            fitted = {}  # (model, seed) -> (model, cost); the policy reuses seed 0 of its candidates
+            # the policy goes last so its candidates are already fit
+            for mname in sorted(a.models, key=lambda m: m == "policy"):
                 for seed in range(a.seeds if mname in ("random_forest", "lightgbm", "gru") else 1):
                     kw = {"gap": gap, **({"n_channels": len(chs), "n_static": n_static} if mname == "gru" else {})}
-                    model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(X[tr], w.y[tr], w.y0[tr]))
+                    if mname == "policy":
+                        for c in PolicyDelta.CANDIDATES:  # candidates not in --models are fit (without rows)
+                            if (c, 0) not in fitted:
+                                fitted[c, 0] = measure_fit(lambda: REGISTRY[c](seed=0, gap=gap).fit(X[tr], w.y[tr], w.y0[tr]))
+                        model, cost = _policy(fitted)
+                    else:
+                        model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(X[tr], w.y[tr], w.y0[tr]))
+                        fitted[mname, seed] = model, cost
                     yp = model.predict(X[te], w.y0[te])
                     infer = _infer_ms(model, X[te], w.y0[te])
                     rows.append({**base, "model": mname, "seed": seed, **_metrics(w, tr, te, yp, thr, a),
@@ -103,6 +110,17 @@ def main():
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(a.out, index=False)
     print(out.groupby(["train_days", "model"])["mase"].mean().unstack().round(3).to_string())
+
+
+def _policy(fitted):
+    """Policy from the candidates already fit: its training cost is theirs (time summed, memory the largest peak)."""
+    cands = {c: fitted[c, 0] for c in PolicyDelta.CANDIDATES}
+    model = PolicyDelta.from_fitted({c: m for c, (m, _) in cands.items()})
+    costs = [c for _, c in cands.values()]
+    chosen = cands.get(model.choice_)
+    cost = Cost(sum(c.wall_s for c in costs), sum(c.cpu_s for c in costs), max(c.peak_py_mb for c in costs),
+                max(c.max_rss_mb for c in costs), chosen[1].model_bytes if chosen else 0)
+    return model, cost
 
 
 def _metrics(w, tr, te, yp, thr, a):

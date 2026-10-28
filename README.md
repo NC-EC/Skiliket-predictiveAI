@@ -11,15 +11,20 @@ SKILIKET project, Tec de Monterrey, team 9 (Modelos Predictivos).
 - [x] Evaluation core: rolling origin with purge, MASE vs persistence, baselines (`src/coldstart/evaluate.py`)
 - [x] Cost measurement: wall/CPU time, memory, model size, inference latency (`src/coldstart/cost.py`)
 - [ ] Adapters for EDIAQI, UCI Air Quality and QUANT (need the real files)
-- [ ] Models: Ridge, trees, small GRU/CNN, zero-shot pretrained model
-- [ ] Alert evaluation, edge simulation in Docker
+- [x] Models: Ridge, random forest, LightGBM, tiny GRU (~1k params), all predicting change vs persistence (`src/coldstart/models.py`)
+- [x] Alert evaluation: percentile threshold, recall, false alarms/day, lead time (`src/coldstart/alerts.py`)
+- [x] Statistics: block bootstrap CI, cold-start criterion, Diebold-Mariano (`src/coldstart/stats.py`)
+- [x] Learning-curve runner (`scripts/run_learning_curve.py`)
+- [ ] Zero-shot pretrained model, edge simulation in Docker
 
 ## Quick start
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[dev,models]"
 pytest
 # put the SKILIKET xlsx in data/raw/skiliket_zenodo_17398551.xlsx, then:
 python scripts/smoke_skiliket.py data/raw/skiliket_zenodo_17398551.xlsx   # pipeline check, NOT a result
+python scripts/run_learning_curve.py --dataset skiliket --path data/raw/skiliket_zenodo_17398551.xlsx \
+    --target eco2 --cadence 5 --horizon 15 --days 1 2 3 --seeds 3 --out results/smoke_skiliket.csv
 ```
 
 ## Data

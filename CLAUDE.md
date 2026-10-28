@@ -65,25 +65,34 @@ Median rel_mae (smoke, not results):
   RF 1.1-1.6 and GRU 1.05-1.4 lose everywhere; moving average ~1.0-1.1.
 Only LightGBM approaches persistence, and only from D=3; check it on more devices before reading anything into it.
 
+Model fixes 1-5 done (2026-10-28): validation gap = n_lags + horizon_steps passed to every model; LightGBM refits on all
+windows with the early-stopped tree count; `huber` model (epsilon by time-ordered CV on MAE); calendar features
+(`evaluate.calendar_features`, `--calendar` on by default; learned models only, the GRU gets them as static channels);
+moving-average check: no bug. Baselines do not train, so a test day gives the same value for every D, and the test days
+for a larger D are the last ones of D=1 (the 1.049 median day sits in the middle of all four sets by chance).
+
+Smoke re-runs after the fixes, DALTON, `--cadence 5 --days 1 3 7 14`, horizons 15/30/60
+(`results/smoke_dalton_<device>_h<h>.csv`; H1_41 before = `*_before.csv`). The 4 devices ran in parallel, so their cost
+columns are not timing. Median rel_mae, D=1/3/7/14 (smoke, not results):
+- H1_41 (home, 24 days), before -> after: LightGBM about the same (h60 1.04/1.02/0.97/1.00 -> 1.02/0.98/0.98/0.99);
+  ridge still worsens with days (h15 1.00 -> 1.16); huber h60 1.06/0.91/0.87/1.00; GRU worse than before at every cell
+  (1.3-1.9; gap and/or calendar channels, not investigated per item 7); RF slightly better.
+- H8_81 (home, 24 days): huber h30 1.16/0.88/0.94/0.78 (D=14 wins 9/9 splits); LightGBM 1.00/1.14/1.00/0.93.
+- R1_51 (lab, 35 days): clearest learning curve. huber h15 1.03/0.74/0.73/0.70, ridge 1.01/0.97/0.89/0.73, LightGBM
+  1.00/0.98/0.95/0.91; RF and GRU also drop below 1 from D=7.
+- C1_25 (classroom, 14 usable days): no D=14 split; huber h15 1.56/0.95/0.67 (7 splits at D=7).
+Pattern: with D=1 every learned model is >= persistence (huber worst, 1.15-2.2); from D=3 the linear models with calendar
+features beat persistence on 3 of 4 devices. Not yet checked against the cold-start criterion (CI bound).
+
 ## CURRENT TASK (on the user's PC), in this order
-Model fixes before any real experiment (add a unit test for each, `pytest`, commit + push after each):
-1. **Validation gap**: `_val_split` and `TimeSeriesSplit` use a fixed gap of 12 windows. With 6 lags and a 60-min horizon at
-   5-min cadence a window spans 18 steps, so fit/validation windows overlap and model selection is optimistic. Make the gap
-   `n_lags + horizon_steps`, passed from the runner to every model.
-2. **LightGBM refit**: after early stopping on the training tail, refit on ALL training windows with `best_iteration_`
-   trees. Today the most recent 10 % of history (the most relevant in cold start) is never used for the final model.
-3. **Linear model with a robust loss**: add `huber` (sklearn `HuberRegressor`, epsilon chosen by the same time-ordered CV on
-   MAE) next to `ridge`. Ridge gets WORSE with more days on DALTON H1_41 (rel_mae 1.00 -> 1.19 at 15 min); the change
-   y - y0 is heavy-tailed, so an L2 fit chases the spikes of older days. Keep ridge in the comparison.
-4. **Calendar features**: add hour-of-day as sin/cos and a weekend flag to X (option `--calendar`, default on; computed from
-   the origin time stamp, so no leakage). Indoor CO2 follows occupancy schedules; without time of day a model cannot learn
-   the daily pattern that more days of history should reveal. This is the main mechanism the learning curve tests.
-5. **Sanity check**: moving_average median rel_mae on H1_41 at 30 min is exactly 1.049 in all four day columns while the
-   test-split sets differ (25/23/19/10 splits). Confirm the per-split values really differ; if not, find why.
-6. Re-run DALTON H1_41 (days 1 3 7 14, horizons 15/30/60) and show the same median rel_mae table plus % of splits won,
-   before vs after these fixes. Then run 3 more DALTON devices from different site types (a home, a lab, a classroom).
-7. Random forest and GRU lose everywhere: keep them in the paper as reported results, no more tuning time.
-8. Afterwards: timing inside Docker with `--cpus 1|2 --memory 1g|2g` (Ryzen 5 5500 = timing reference).
+1. **Common test days** (found in fix 5): each D is tested on different days (D=1 from day 2, D=14 from day 15), so the
+   learning curve mixes "more history" with "a different test period". Add `--common-test` (test only on days that exist
+   for the largest D) and use it for results. Ask the user before making it the default.
+2. **Huber convergence**: `HuberRegressor` hits max_iter=500 in ~2,150 CV fits per H1_41 run (lbfgs warnings). Check
+   whether raising max_iter/tol changes rel_mae; also guard D=1 (too few windows for robust CV?).
+3. Random forest and GRU: keep them in the paper as reported results, no more tuning time.
+4. Timing inside Docker with `--cpus 1|2 --memory 1g|2g` (Ryzen 5 5500 = timing reference); Dockerfile and timing script
+   are in the repo, not yet run.
 
 ## Open decisions (ask the user, don't assume)
 Sensor model / time zone / device ID of SKILIKET kits; zero-shot pretrained model (Chronos vs TimesFM, check license and size); false-alarm budget; publication venue.

@@ -85,14 +85,31 @@ Pattern: with D=1 every learned model is >= persistence (huber worst, 1.15-2.2);
 features beat persistence on 3 of 4 devices. Not yet checked against the cold-start criterion (CI bound).
 
 ## CURRENT TASK (on the user's PC), in this order
-1. **Common test days** (found in fix 5): each D is tested on different days (D=1 from day 2, D=14 from day 15), so the
-   learning curve mixes "more history" with "a different test period". Add `--common-test` (test only on days that exist
-   for the largest D) and use it for results. Ask the user before making it the default.
-2. **Huber convergence**: `HuberRegressor` hits max_iter=500 in ~2,150 CV fits per H1_41 run (lbfgs warnings). Check
-   whether raising max_iter/tol changes rel_mae; also guard D=1 (too few windows for robust CV?).
-3. Random forest and GRU: keep them in the paper as reported results, no more tuning time.
-4. Timing inside Docker with `--cpus 1|2 --memory 1g|2g` (Ryzen 5 5500 = timing reference); Dockerfile and timing script
-   are in the repo, not yet run.
+User decisions 2026-10-28: **`--common-test` is ON for every result run** (make it the default; keep `--no-common-test`
+for smoke checks). Huber alpha by CV: finish the running check; keep it only if it helps at D >= 3 without hurting elsewhere.
+
+1. **Summary script** `scripts/summarize.py` (reads one or more runner CSVs; writes `results/summary_*.csv`):
+   per dataset x device x target x horizon x model x D: median rel_mae, mean rel_mae with 95% block-bootstrap CI
+   (groups = split, so seeds stay together), % of splits won vs persistence, n_splits, and `meets_cold_start`.
+   Plus, per device x target x horizon x model: **D\*** = the smallest D that meets the cold-start criterion (NaN if none).
+   D\* is the paper's headline quantity. Unit-test it on a small labeled synthetic CSV.
+2. **Cold-start policy (practical contribution)**: add model name `policy`: inside each split, compare the best learned
+   model (by rel_mae on the training tail, same gap rules) with persistence and use persistence when no model wins there.
+   It answers "what should a brand-new kit actually run on day N". It must use training data only.
+3. **Result runs** (`results/runs/`, not smoke; commit only the summaries, not the per-split CSVs if they are large):
+   - DALTON: every device, target eco2 and tvoc, horizons 15/30/60, `--days 1 2 3 5 7 14`, `--seeds 3`, `--common-test`.
+     Devices with too few days for D=14 simply yield fewer columns. Run several processes in parallel (timing columns
+     from parallel runs are NOT timing results; say so in the CSV `host` or a `parallel` column).
+   - Urbino: 3 rooms, eco2, horizons 15/30/60 (files are 5-min), `--days 1 3 7 14 30 60`, `--common-test`.
+   - EDIAQI: providers with TVOC in ppb (1, 3, 4, 6) for eco2 and tvoc, horizons 15/30/60, `--days 1 2 3 5 7`.
+   Estimate total time first (H1_41 took ~8 min per horizon) and tell the user before starting a run longer than ~6 h.
+4. Timing in Docker (`scripts/run_edge_matrix.sh`) once the user has installed WSL2 + Docker Desktop. Run timing
+   configurations one at a time, with nothing else running.
+5. Random forest and GRU: keep them in the paper as reported results, no more tuning time.
+
+Notes for the paper (do not act on them now): DALTON's clock time zone is unknown, so hour-of-day features are in each
+device's own clock (fine for per-device models, not comparable across sites); calendar features are what turns the
+learning curve upward from D = 3 on the 4 smoke devices.
 
 ## Open decisions (ask the user, don't assume)
 Sensor model / time zone / device ID of SKILIKET kits; zero-shot pretrained model (Chronos vs TimesFM, check license and size); false-alarm budget; publication venue.

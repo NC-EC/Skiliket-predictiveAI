@@ -66,11 +66,19 @@ def main():
     X = np.hstack([w.X, ev.calendar_features(w.t0)]) if a.calendar else w.X
     n_static = len(ev.CALENDAR) if a.calendar else 0
     print(f"{meta.name}: grid={len(grid)} windows={len(w.y)} channels={chs} calendar={a.calendar}")
+    # train lengths this device can hold (D days of training plus one test period); with --common-test the largest
+    # of these sets the first origin, so a short device keeps its feasible lengths instead of losing every split
+    span_days = (w.t_target.max() - w.t0.min()) / np.timedelta64(1, "D") if len(w.y) else 0.0
+    days = [D for D in a.days if D + a.test_days <= span_days]
+    if days != list(a.days):
+        print(f"span {span_days:.1f} days: train lengths {sorted(set(a.days) - set(days))} skipped")
+    if not days:
+        raise SystemExit(f"{meta.name}: {span_days:.1f} days of windows, too short for any --days")
 
     rows = []
-    for D in a.days:
+    for D in days:
         for split, (tr, te) in enumerate(ev.rolling_origin(w, D, a.test_days, purge, step_days=1.0,
-                                                               first_origin_days=max(a.days) if a.common_test else None)):
+                                                               first_origin_days=max(days) if a.common_test else None)):
             # fixed-length history: keep only the last D days before the train end
             t_end = w.t_target[tr].max()
             tr = tr[w.t0[tr] >= t_end - np.timedelta64(int(D * 86400), "s")]
@@ -83,7 +91,7 @@ def main():
             for name, yp in preds.items():
                 rows.append({**base, "model": name, "seed": 0, **_metrics(w, tr, te, yp, thr, a)})
             for mname in a.models:
-                for seed in range(a.seeds if mname in ("random_forest", "lightgbm", "gru", "policy") else 1):
+                for seed in range(a.seeds if mname in ("random_forest", "lightgbm", "gru") else 1):
                     kw = {"gap": gap, **({"n_channels": len(chs), "n_static": n_static} if mname == "gru" else {})}
                     model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(X[tr], w.y[tr], w.y0[tr]))
                     yp = model.predict(X[te], w.y0[te])

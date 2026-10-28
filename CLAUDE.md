@@ -45,6 +45,15 @@ max(5 min, 1.5 x native step), mirroring `evaluate.to_grid`.
 
 ## CURRENT TASK (on the user's PC)
 1. Investigate why Ridge / RF / LightGBM score MASE ~2-3 on the EDIAQI provider1 smoke run (persistence ~1.2) before trusting any run.
+   - Run `scripts/diagnose_mase.py --dataset ediaqi --path data/raw/ediaqi --device provider1 --target eco2 --days 1 2 3`
+     and paste its output to the user. Read it this way: `align` != 0 → window bug; `in` > 1 → the model cannot fit
+     its own training data (bug in scaling/target); `in` << 1 with `out` > 1 → overfitting/regime shift (a genuine finding, not a bug);
+     tiny `denom` on some splits → the mean of MASE across splits is inflated; compare models with `rel_mae` instead.
+   - On SKILIKET (checked in the cloud session) align = 0 and the pattern is overfitting: LightGBM in = 0.15, out = 1.2-1.6;
+     RF in = 0.55, out = 1.0-1.2; Ridge in = 0.9, out = 1.0-1.8. No code bug found there.
+   - If EDIAQI shows the same pattern, propose (don't apply silently) small-data regularization chosen on training data only:
+     RidgeCV with time-ordered folds, RF `min_samples_leaf` ~20, LightGBM fewer trees + early stopping on the training tail.
+   - The runner now also writes `rel_mae` (MAE model / MAE persistence on the same test split). Report both.
 2. Measure timing inside Docker with `--cpus 1|2 --memory 1g|2g` on this PC (Ryzen 5 5500 = timing reference).
 
 ## Open decisions (ask the user, don't assume)

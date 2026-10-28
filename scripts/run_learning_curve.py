@@ -87,7 +87,10 @@ def main():
 
 
 def _metrics(w, tr, te, yp, thr, a):
-    m = {"mase": ev.mase(w.y[te], yp, w.y[tr], w.y0[tr]), "mae": ev.mae(w.y[te], yp), "rmse": ev.rmse(w.y[te], yp)}
+    m = {"mase": ev.mase(w.y[te], yp, w.y[tr], w.y0[tr]), "mae": ev.mae(w.y[te], yp), "rmse": ev.rmse(w.y[te], yp),
+         # scale-free skill on the same test split: MAE(model) / MAE(persistence); < 1 beats persistence.
+         # Unlike the mean of MASE across splits, it is not inflated by splits with a tiny training denominator.
+         "rel_mae": ev.mae(w.y[te], yp) / max(ev.mae(w.y[te], w.y0[te]), 1e-12)}
     al = evaluate_alerts(w.t0[te], w.t_target[te], w.y[te], yp, thr, a.horizon)
     return {**m, "alert_threshold": thr, **{f"alert_{k}": v for k, v in al.items()}}
 

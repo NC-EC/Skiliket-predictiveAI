@@ -4,7 +4,7 @@
 #   docker build -t coldstart .
 #   bash scripts/run_edge_matrix.sh dalton H1_41
 # Extra runner arguments can follow the device, e.g. --days 1 3 7 --horizon 30.
-# NOT YET RUN: written in the cloud session; check the first configuration's output before running all four.
+# CPUS / MEMS pick a subset, e.g. CPUS=1 MEMS=1g bash scripts/run_edge_matrix.sh dalton H1_41 ... (one configuration).
 set -euo pipefail
 dataset=${1:?dataset}; device=${2:?device}; shift 2
 case $dataset in
@@ -14,13 +14,15 @@ esac
 mkdir -p results/edge
 # Git Bash on Windows rewrites /paths; MSYS_NO_PATHCONV keeps container paths intact.
 export MSYS_NO_PATHCONV=1
-for cpus in 1 2; do
-  for mem in 1g 2g; do
+# a Windows path (C:/...) for the bind mounts; plain pwd elsewhere
+root=$(pwd -W 2>/dev/null || pwd)
+for cpus in ${CPUS:-1 2}; do
+  for mem in ${MEMS:-1g 2g}; do
     tag="${dataset}_${device}_cpu${cpus}_mem${mem}"
     echo "== $tag"
     docker run --rm --cpus "$cpus" --memory "$mem" --memory-swap "$mem" \
       -e OMP_NUM_THREADS="$cpus" -e MKL_NUM_THREADS="$cpus" -e OPENBLAS_NUM_THREADS="$cpus" \
-      -v "$(pwd)/data/raw:/data:ro" -v "$(pwd)/results/edge:/app/results/edge" \
+      -v "$root/data/raw:/data:ro" -v "$root/results/edge:/app/results/edge" \
       coldstart --dataset "$dataset" --path "$path" --device "$device" \
       --out "results/edge/${tag}.csv" "$@" \
       || echo "!! $tag failed (exit $?): out of memory shows as exit 137"

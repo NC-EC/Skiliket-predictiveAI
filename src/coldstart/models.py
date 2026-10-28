@@ -4,6 +4,10 @@ All learned models predict the *change* from the last observed value (y - y0) an
 back, so an untrained/zero model reduces to persistence. Inputs are standardized with
 training statistics only.
 
+Small-data regularization (cold start means a few hundred windows): every choice uses the training windows only,
+in time order. Ridge picks alpha by time-ordered CV on MAE, the forest uses large leaves, LightGBM stops early on
+the last 10% of training windows. The change y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
+
 Model(seed).fit(X, y, y0) -> self ; .predict(X, y0) -> y_hat
 X has shape (n, n_lags * n_channels), channels interleaved per lag (see evaluate.make_windows).
 """
@@ -12,6 +16,16 @@ from __future__ import annotations
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import Ridge
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
+
+ALPHAS = np.logspace(-2, 4, 13)
+
+
+def _val_split(n: int, frac: float = 0.1, gap: int = 12) -> tuple[slice, slice]:
+    """Fit on the head, validate on the time-ordered tail; `gap` windows are skipped so overlapping windows
+    (lags + horizon) do not leak from fit into validation."""
+    n_val = max(1, int(frac * n))
+    return slice(0, max(1, n - n_val - gap)), slice(n - n_val, n)
 
 
 class _Scaled:
@@ -26,12 +40,18 @@ class _Scaled:
 class RidgeDelta(_Scaled):
     name = "ridge"
 
-    def __init__(self, seed: int = 0, alpha: float = 1.0):
-        self.alpha = alpha
+    def __init__(self, seed: int = 0, alpha: float | None = None, cv_splits: int = 5, gap: int = 12):
+        self.alpha, self.cv_splits, self.gap = alpha, cv_splits, gap  # alpha=None: chosen by time-ordered CV
 
     def fit(self, X, y, y0):
         self._fit_scale(X)
-        self.m = Ridge(alpha=self.alpha).fit(self._scale(X), y - y0)
+        Xs, d = self._scale(X), y - y0
+        if self.alpha is not None:
+            self.m = Ridge(alpha=self.alpha).fit(Xs, d)
+        else:
+            cv = TimeSeriesSplit(n_splits=self.cv_splits, gap=self.gap)
+            search = GridSearchCV(Ridge(), {"alpha": ALPHAS}, cv=cv, scoring="neg_mean_absolute_error").fit(Xs, d)
+            self.m, self.alpha_ = search.best_estimator_, search.best_params_["alpha"]
         return self
 
     def predict(self, X, y0):
@@ -41,8 +61,9 @@ class RidgeDelta(_Scaled):
 class ForestDelta:
     name = "random_forest"
 
-    def __init__(self, seed: int = 0, n_estimators: int = 100, max_depth: int | None = 8, n_jobs: int = 1):
-        self.m = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, min_samples_leaf=5,
+    def __init__(self, seed: int = 0, n_estimators: int = 100, max_depth: int | None = 8, min_samples_leaf: int = 20,
+                 n_jobs: int = 1):
+        self.m = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, min_samples_leaf=min_samples_leaf,
                                        random_state=seed, n_jobs=n_jobs)
 
     def fit(self, X, y, y0):
@@ -56,15 +77,22 @@ class ForestDelta:
 class LGBMDelta:
     name = "lightgbm"
 
-    def __init__(self, seed: int = 0, n_estimators: int = 200, num_leaves: int = 15, n_jobs: int = 1):
+    def __init__(self, seed: int = 0, n_estimators: int = 300, num_leaves: int = 7, patience: int = 20,
+                 n_jobs: int = 1):
         import lightgbm as lgb
 
+        self.patience = patience
         self.m = lgb.LGBMRegressor(n_estimators=n_estimators, num_leaves=num_leaves, learning_rate=0.05,
-                                   min_child_samples=10, subsample=0.8, subsample_freq=1, colsample_bytree=0.8,
+                                   min_child_samples=20, subsample=0.8, subsample_freq=1, colsample_bytree=0.8,
                                    random_state=seed, n_jobs=n_jobs, verbose=-1)
 
     def fit(self, X, y, y0):
-        self.m.fit(X, y - y0)
+        import lightgbm as lgb
+
+        d = y - y0
+        fit, val = _val_split(len(X))
+        self.m.fit(X[fit], d[fit], eval_X=X[val], eval_y=d[val], eval_metric="l1",
+                   callbacks=[lgb.early_stopping(self.patience, first_metric_only=True, verbose=False)])
         return self
 
     def predict(self, X, y0):

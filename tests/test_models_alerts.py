@@ -128,6 +128,13 @@ def test_policy_picks_by_validation_scores_without_refitting():
     assert np.array_equal(p.predict(X[:5], y0[:5]), fitted[p.choice_].predict(X[:5], y0[:5]))
 
 
+def test_policy_candidates_exclude_lightgbm():
+    assert REGISTRY["policy"].CANDIDATES == ("ridge", "huber")
+    X, y, y0 = _data(400)
+    p = REGISTRY["policy"](seed=0, gap=18).fit(X, y, y0)
+    assert set(p.cv_rel_mae_) == {"ridge", "huber"} and p.choice_ in ("ridge", "huber", "persistence")
+
+
 def test_policy_falls_back_to_persistence():
     X, y, y0 = _data(300)
     fitted = {n: REGISTRY[n](seed=0, gap=18).fit(X, y, y0) for n in ("ridge", "huber")}

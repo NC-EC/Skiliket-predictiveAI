@@ -294,13 +294,15 @@ class PolicyDelta:
     """Cold-start policy: what a brand-new kit should run on day N, chosen from its own training data only.
 
     No extra training: each candidate is fit as usual and brings its own time-ordered validation score, cv_rel_mae_ =
-    MAE(model) / MAE(persistence) on its validation windows (ridge and huber: their hyperparameter CV folds; LightGBM:
-    its early-stopping tail). The candidate with the lowest score is used if it beats persistence there (< 1);
+    MAE(model) / MAE(persistence) on its hyperparameter CV folds. Candidates are ridge and huber only: LightGBM's score
+    comes from the same tail its early stopping used, so it is optimistic (on DALTON eco2 h15 the policy picked
+    LightGBM 64-76 % of the time while LightGBM met the cold-start criterion on the fewest devices of the three).
+    The candidate with the lowest score is used if it beats persistence there (< 1);
     otherwise the policy predicts persistence. A candidate without a score (history too short to validate) never wins.
     The runner passes the candidates it already fit (from_fitted), so the policy costs nothing beyond them."""
 
     name = "policy"
-    CANDIDATES = ("ridge", "huber", "lightgbm")
+    CANDIDATES = ("ridge", "huber")
 
     def __init__(self, seed: int = 0, gap: int = GAP, candidates=CANDIDATES):
         self.seed, self.gap, self.candidates = seed, gap, candidates

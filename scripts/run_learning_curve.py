@@ -104,12 +104,19 @@ def main():
                     yp = model.predict(X[te], w.y0[te])
                     infer = _infer_ms(model, X[te], w.y0[te])
                     rows.append({**base, "model": mname, "seed": seed, **_metrics(w, tr, te, yp, thr, a),
-                                 **cost.asdict(), "infer_ms": infer, "policy_choice": getattr(model, "choice_", "")})
+                                 **cost.asdict(), "infer_ms": infer, "policy_choice": getattr(model, "choice_", ""),
+                                 # the model's own validation score; summarize can recompute the policy from it
+                                 "cv_rel_mae": _cv_score(model)})
             print(f"D={D} split={split} done")
     out = pd.DataFrame(rows)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(a.out, index=False)
     print(out.groupby(["train_days", "model"])["mase"].mean().unstack().round(3).to_string())
+
+
+def _cv_score(model) -> float:
+    v = getattr(model, "cv_rel_mae_", np.nan)
+    return float(v) if np.isscalar(v) else np.nan  # the policy keeps a dict of its candidates' scores
 
 
 def _policy(fitted):

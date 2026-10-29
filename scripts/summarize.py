@@ -67,6 +67,12 @@ def recompute_policy(df: pd.DataFrame, candidates=POLICY_CANDIDATES) -> pd.DataF
     persistence. Metrics come from the chosen model's row; time is the sum over the candidates (memory the max)."""
     if "cv_rel_mae" not in df:
         return df
+    if "source" in df:  # mixed inputs: files written before the cv_rel_mae column keep the runner's policy rows
+        scored = df.groupby("source")["cv_rel_mae"].transform(lambda s: s.notna().any())
+        if not scored.any():
+            return df
+        if not scored.all():
+            return pd.concat([df[~scored], recompute_policy(df[scored], candidates)], ignore_index=True)
     split_keys = ["dataset", "device", "target", "horizon_min", "train_days", "split"]
     base = df[df["model"] != "policy"]
     cand = base[base["model"].isin(candidates) & (base["seed"] == 0)]

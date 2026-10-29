@@ -143,3 +143,26 @@ def test_single_d_is_insufficient_and_largest_d_is_unconfirmed():
     # meeting at 14 = the design maximum with a smaller D failing: still unconfirmed, not reached
     edge = summarize.d_star(_cells({"a": {7: False, 14: True}, "b": {1: True, 14: True}})).set_index("device")
     assert edge.loc["a", "d_star_status"] == "unconfirmed" and edge.loc["b", "d_star_status"] == "reached"
+
+
+def test_policy_recomputed_only_for_files_with_validation_scores(tmp_path):
+    """SYNTHETIC rows (code test only): a new CSV (cv_rel_mae) loaded with an old one (no such column) must not
+    turn the old file's policy rows into persistence."""
+    def rows(device, cv):
+        b = {"dataset": "s", "device": device, "target": "eco2", "horizon_min": 15, "train_days": 3, "split": 0,
+             "seed": 0}
+        r = [{**b, "model": "persistence", "rel_mae": 1.0}, {**b, "model": "ridge", "rel_mae": 0.9},
+             {**b, "model": "huber", "rel_mae": 0.8}, {**b, "model": "policy", "rel_mae": 0.7,
+                                                      "policy_choice": "lightgbm"}]
+        if cv:
+            for x in r[1:3]:
+                x["cv_rel_mae"] = 0.95 if x["model"] == "ridge" else 0.9
+        return pd.DataFrame(r)
+
+    rows("new", True).to_csv(tmp_path / "new.csv", index=False)
+    rows("old", False).to_csv(tmp_path / "old.csv", index=False)
+    df = summarize.load([str(tmp_path / "new.csv"), str(tmp_path / "old.csv")])
+    pol = summarize.recompute_policy(df).query("model == 'policy'").set_index("device")
+    assert len(pol) == 2
+    assert pol.loc["old", "policy_choice"] == "lightgbm" and pol.loc["old", "rel_mae"] == 0.7
+    assert pol.loc["new", "policy_choice"] == "huber" and pol.loc["new", "rel_mae"] == 0.8

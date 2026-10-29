@@ -75,3 +75,53 @@ def test_short_split_dropped_and_geometric_mean_is_robust(tmp_path):
     raw = summarize.summarize_cells(df, n_resamples=200, min_test_frac=0).set_index("model").loc["m"]
     assert raw["n_splits"] == 12 and raw["mean_rel_mae"] > 3      # the arithmetic mean is wrecked by one split
     assert raw["geo_rel_mae"] < 1.1                                # the geometric mean much less so
+
+
+def _cells(spec):
+    """SYNTHETIC cell table (code test only): {device: {D: meets}} for one model."""
+    return pd.DataFrame([{"dataset": "s", "device": dev, "target": "eco2", "horizon_min": 15, "model": "m",
+                          "train_days": D, "meets_cold_start": ok}
+                         for dev, by_d in spec.items() for D, ok in by_d.items()])
+
+
+def test_stable_d_star_status_and_fraction():
+    cells = _cells({
+        "stable": {1: False, 3: True, 7: True, 14: True},
+        "flicker": {1: True, 3: False, 7: True, 14: True},    # first = 1, stable = 7
+        "lost": {1: False, 3: True, 7: True, 14: False},      # tested at 14 and fails there: never
+        "short_ok": {1: False, 3: True},                      # stable within what it has
+        "short_no": {1: False, 3: False},                     # too few days for 14: untestable
+    })
+    ds = summarize.d_star(cells).set_index("device")
+    assert ds.loc["stable", ["d_star", "d_star_status"]].tolist() == [3, "reached"]
+    assert ds.loc["flicker", "d_star"] == 7 and ds.loc["flicker", "d_star_first"] == 1
+    assert np.isnan(ds.loc["lost", "d_star"]) and ds.loc["lost", "d_star_status"] == "never"
+    assert ds.loc["lost", "d_star_first"] == 3
+    assert ds.loc["short_ok", "d_star"] == 3
+    assert ds.loc["short_no", "d_star_status"] == "untestable" and ds.loc["short_no", "max_days_tested"] == 3
+
+    fr = summarize.fraction_meeting(cells).set_index("train_days")
+    assert fr.loc[3, ["n_devices", "n_meeting"]].tolist() == [5, 3]
+    assert fr.loc[14, "n_devices"] == 3 and fr.loc[14, "frac_meeting"] == pytest.approx(2 / 3)
+
+
+def test_policy_recomputed_from_validation_scores():
+    """SYNTHETIC runner rows (code test only). Split 0: huber validates best -> huber's test row.
+    Split 1: no candidate validates below 1 -> persistence. LightGBM validates best of all but is not a candidate."""
+    rows = []
+    for split, (cv_r, cv_h) in enumerate([(0.9, 0.8), (1.1, np.nan)]):
+        b = {"dataset": "s", "device": "d", "target": "eco2", "horizon_min": 15, "train_days": 3, "split": split,
+             "seed": 0}
+        rows += [{**b, "model": "persistence", "rel_mae": 1.0, "mae": 10.0},
+                 {**b, "model": "ridge", "rel_mae": 0.95, "mae": 9.5, "cv_rel_mae": cv_r, "wall_s": 1.0},
+                 {**b, "model": "huber", "rel_mae": 0.85, "mae": 8.5, "cv_rel_mae": cv_h, "wall_s": 2.0},
+                 {**b, "model": "lightgbm", "rel_mae": 1.3, "mae": 13.0, "cv_rel_mae": 0.5, "wall_s": 0.1},
+                 {**b, "model": "policy", "rel_mae": 1.3, "mae": 13.0, "policy_choice": "lightgbm"}]
+    out = summarize.recompute_policy(pd.DataFrame(rows))
+    pol = out[out.model == "policy"].set_index("split")
+    assert len(pol) == 2
+    assert pol.loc[0, "policy_choice"] == "huber" and pol.loc[0, "rel_mae"] == 0.85 and pol.loc[0, "wall_s"] == 3.0
+    assert pol.loc[1, "policy_choice"] == "persistence" and pol.loc[1, "rel_mae"] == 1.0
+    # CSVs without validation scores keep the runner's policy rows
+    old = pd.DataFrame(rows).drop(columns="cv_rel_mae")
+    assert summarize.recompute_policy(old).equals(old)

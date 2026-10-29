@@ -1,8 +1,17 @@
 """Summarize runner CSVs: one row per (dataset, device, target, horizon, model, D), plus D* per model.
 
-D* = the smallest training length D that meets the cold-start criterion (stats.meets_cold_start: GEOMETRIC mean of
-rel_mae < 1 and upper 95% block-bootstrap CI bound < 1, splits as blocks so the seeds of one split stay together).
-NaN if no D meets it.
+Cold-start criterion (stats.meets_cold_start): GEOMETRIC mean of rel_mae < 1 and upper 95% block-bootstrap CI bound
+< 1, splits as blocks so the seeds of one split stay together.
+
+D* (stable) = the smallest training length D that meets the criterion and keeps meeting it at every larger D the device
+was tested on. d_star_status says why D* is NaN: "never" (the device was tested at the largest D of the design and no
+stable D exists) or "untestable" (too few days for the largest D, and no stable D within the D it has). d_star_first
+(smallest D that meets it once) is kept for comparison. {out}_fraction.csv: share of devices meeting the criterion at
+each D among the devices tested at that D (the main figure).
+
+Policy: if the CSVs carry the models' own validation scores (cv_rel_mae column), the policy rows are recomputed here
+from POLICY_CANDIDATES (persistence when no candidate validates below 1), so the candidate set can change without a
+re-run. Older CSVs without that column keep the runner's policy rows.
 
 Short test splits are dropped first: a split whose test set has fewer than --min-test-frac (default 0.5) of the
 windows of a full test day for that device and horizon (the largest n_test seen) is excluded, because a handful of
@@ -32,6 +41,7 @@ import pandas as pd
 from coldstart.stats import bootstrap_ci, geomean_ci
 
 KEYS = ["dataset", "device", "target", "horizon_min", "model"]
+POLICY_CANDIDATES = ("ridge", "huber")  # LightGBM's score is optimistic: validated on its own early-stopping tail
 COST = {"wall_s": "train_s", "peak_py_mb": "peak_py_mb", "infer_ms": "infer_ms", "model_bytes": "model_bytes"}
 
 
@@ -45,6 +55,35 @@ def load(paths: list[str]) -> pd.DataFrame:
         df["source"] = Path(p).name
         frames.append(df)
     return pd.concat(frames, ignore_index=True)
+
+
+def recompute_policy(df: pd.DataFrame, candidates=POLICY_CANDIDATES) -> pd.DataFrame:
+    """Replace the policy rows: per split, the candidate (seed 0) with the lowest cv_rel_mae if it is < 1, else
+    persistence. Metrics come from the chosen model's row; time is the sum over the candidates (memory the max)."""
+    if "cv_rel_mae" not in df:
+        return df
+    split_keys = ["dataset", "device", "target", "horizon_min", "train_days", "split"]
+    base = df[df["model"] != "policy"]
+    cand = base[base["model"].isin(candidates) & (base["seed"] == 0)]
+    pers = {k: g.iloc[0] for k, g in base[base["model"] == "persistence"].groupby(split_keys, sort=False)}
+    rows = []
+    for key, g in cand.groupby(split_keys, sort=False):
+        scored = g[np.isfinite(g["cv_rel_mae"])]
+        best = scored.loc[scored["cv_rel_mae"].idxmin()] if len(scored) else None
+        win = best is not None and best["cv_rel_mae"] < 1
+        row = best if win else pers.get(key)
+        if row is None:
+            continue
+        row = row.copy()
+        row["model"], row["seed"] = "policy", 0
+        row["policy_choice"] = best["model"] if win else "persistence"
+        for c in ("wall_s", "cpu_s"):
+            if c in g:
+                row[c] = g[c].sum()
+        if "peak_py_mb" in g:
+            row["peak_py_mb"] = g["peak_py_mb"].max()
+        rows.append(row)
+    return pd.concat([base, pd.DataFrame(rows)], ignore_index=True)
 
 
 def drop_short_splits(df: pd.DataFrame, min_test_frac: float = 0.5) -> tuple[pd.DataFrame, pd.Series]:
@@ -67,7 +106,7 @@ def _pooled(g: pd.DataFrame, pers: pd.DataFrame | None) -> float:
 
 
 def summarize_cells(df: pd.DataFrame, n_resamples: int = 1000, min_test_frac: float = 0.5) -> pd.DataFrame:
-    df, short = drop_short_splits(df, min_test_frac)
+    df, short = drop_short_splits(recompute_policy(df), min_test_frac)
     rows = []
     cell_keys = KEYS[:-1] + ["train_days"]
     pers_by_cell = {k: g for k, g in df[df["model"] == "persistence"].groupby(cell_keys, sort=False)}
@@ -93,12 +132,33 @@ def summarize_cells(df: pd.DataFrame, n_resamples: int = 1000, min_test_frac: fl
 
 
 def d_star(cells: pd.DataFrame) -> pd.DataFrame:
+    design_max = cells.groupby(["dataset", "target", "horizon_min"])["train_days"].max()
     rows = []
     for key, g in cells.groupby(KEYS, sort=True):
-        ok = g.loc[g["meets_cold_start"], "train_days"]
-        rows.append({**dict(zip(KEYS, key)), "d_star": float(ok.min()) if len(ok) else np.nan,
-                     "days_tested": " ".join(f"{d:g}" for d in sorted(g["train_days"]))})
+        g = g.sort_values("train_days")
+        meets = g["meets_cold_start"].to_numpy(bool)
+        days = g["train_days"].to_numpy(float)
+        # stable: meets here and at every larger D tested (suffix of all-True)
+        stable = np.flip(np.logical_and.accumulate(np.flip(meets)))
+        k = dict(zip(KEYS, key))
+        ds = float(days[stable][0]) if stable.any() else np.nan
+        if np.isfinite(ds):
+            status = "reached"
+        else:
+            status = "never" if days.max() >= design_max[k["dataset"], k["target"], k["horizon_min"]] else "untestable"
+        rows.append({**k, "d_star": ds, "d_star_status": status,
+                     "d_star_first": float(days[meets][0]) if meets.any() else np.nan,
+                     "max_days_tested": float(days.max()),
+                     "days_tested": " ".join(f"{d:g}" for d in days)})
     return pd.DataFrame(rows)
+
+
+def fraction_meeting(cells: pd.DataFrame) -> pd.DataFrame:
+    """Per dataset x target x horizon x model x D: devices tested at D, devices meeting the criterion, their share."""
+    g = cells.groupby(["dataset", "target", "horizon_min", "model", "train_days"])["meets_cold_start"]
+    out = g.agg(n_devices="size", n_meeting="sum").reset_index()
+    out["frac_meeting"] = out["n_meeting"] / out["n_devices"]
+    return out
 
 
 def main():
@@ -116,6 +176,7 @@ def main():
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     cells.to_csv(f"{a.out}_cells.csv", index=False)
     ds.to_csv(f"{a.out}_dstar.csv", index=False)
+    fraction_meeting(cells).to_csv(f"{a.out}_fraction.csv", index=False)
     print(ds.to_string(index=False))
 
 

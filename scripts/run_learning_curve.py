@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import platform
 import time
+import traceback
 from pathlib import Path
 
 import numpy as np
@@ -73,8 +74,8 @@ def main():
     if not days:
         raise SystemExit(f"{name}: {span_days:.1f} days of windows, too short for any --days")
 
-    rows = []
-    for D in days:
+    def one_d(D):
+        rows = []
         for split, (tr, te) in enumerate(ev.rolling_origin(w, D, a.test_days, purge, step_days=1.0,
                                                                first_origin_days=max(days) if a.common_test else None)):
             # fixed-length history: keep only the last D days before the train end
@@ -108,10 +109,31 @@ def main():
                                  # the model's own validation score; summarize can recompute the policy from it
                                  "cv_rel_mae": _cv_score(model)})
             print(f"D={D} split={split} done")
+        return rows
+
+    rows, failed = run_each(days, one_d)
+    if not rows:
+        raise SystemExit(f"{name}: every train length failed: {failed}")
     out = pd.DataFrame(rows)
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
     out.to_csv(a.out, index=False)
     print(out.groupby(["train_days", "model"])["mase"].mean().unstack().round(3).to_string())
+    if failed:
+        print(f"FAILED train lengths (no rows written): {failed}")
+
+
+def run_each(days, one_d):
+    """Run one_d(D) for every train length; an error in one D is logged (traceback) and the others still run.
+    A failed D contributes no rows, so every D in the CSV has all its splits. Returns (rows, failed {D: error})."""
+    rows, failed = [], {}
+    for D in days:
+        try:
+            rows += one_d(D)
+        except Exception as e:  # noqa: BLE001 - one bad train length must not lose the device's other lengths
+            traceback.print_exc()
+            failed[D] = f"{type(e).__name__}: {e}"
+            print(f"D={D} FAILED ({failed[D]}); continuing with the other train lengths", flush=True)
+    return rows, failed
 
 
 def _cv_score(model) -> float:

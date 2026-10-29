@@ -7,7 +7,8 @@ training statistics only.
 Small-data regularization (cold start means a few hundred windows): every choice uses the training windows only,
 in time order. Ridge picks alpha and Huber epsilon by time-ordered CV on MAE, the forest uses large leaves,
 LightGBM picks the number of trees by early stopping on the last 10% of training windows, then refits on all of
-them. The change y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
+them; with fewer than MIN_VAL validation (or fit) windows it trains a fixed FIXED_TREES trees without early stopping
+and leaves cv_rel_mae_ NaN (a 1-window tail crashed LightGBM on DALTON R4_24, h60). The change y - y0 is heavy-tailed, so selection is on MAE, the reported metric.
 With clip=True every predicted change is clipped to the [p1, p99] range of the training changes. Off by default: on
 DALTON H1_41 (h15, D=1/3/7) it left huber's mean and median rel_mae unchanged (the large mean came from one 10-window
 test split, not from extrapolated changes).
@@ -45,6 +46,9 @@ def _time_cv_search(est, grid: dict, X, d, cv_splits: int, gap: int):
             return GridSearchCV(est, grid, cv=cv, scoring="neg_mean_absolute_error").fit(X, d)
     return None
 
+
+MIN_VAL = 20       # fewest validation windows LightGBM early-stops on
+FIXED_TREES = 100  # trees when the history is too short to early-stop
 
 CLIP_Q = (1.0, 99.0)  # percentiles of the training changes y - y0 that bound every predicted change
 
@@ -175,6 +179,13 @@ class LGBMDelta(_ChangeModel):
         d = y - y0
         self._set_clip(d)
         fit, val = _val_split(len(X), gap=self.gap)
+        if len(X) - val.start < MIN_VAL or fit.stop < MIN_VAL:
+            # too short to validate: fixed tree count, no validation score (the policy then ignores LightGBM)
+            self.best_iteration_, self.cv_rel_mae_ = FIXED_TREES, float("nan")
+            self.m.set_params(n_estimators=FIXED_TREES)
+            self.m.fit(X, d)
+            self.n_fit_ = len(X)
+            return self
         probe = lgb.LGBMRegressor(**self.m.get_params())
         probe.fit(X[fit], d[fit], eval_X=X[val], eval_y=d[val], eval_metric="l1",
                   callbacks=[lgb.early_stopping(self.patience, first_metric_only=True, verbose=False)])

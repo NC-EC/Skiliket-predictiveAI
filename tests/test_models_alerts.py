@@ -92,6 +92,19 @@ def test_lightgbm_refits_on_all_windows_with_best_iteration():
     assert m.n_fit_ == 600
 
 
+def test_lightgbm_short_history_skips_early_stopping():
+    """150 windows -> a 15-window tail (< MIN_VAL); 12 windows -> a 1-window tail, which crashed LightGBM before."""
+    from coldstart.models import FIXED_TREES
+
+    for n in (12, 150):
+        X, y, y0 = _data(n)
+        m = REGISTRY["lightgbm"](seed=0, gap=18).fit(X, y, y0)
+        assert m.best_iteration_ == FIXED_TREES and np.isnan(m.cv_rel_mae_)
+        assert np.isfinite(m.predict(X, y0)).all()
+    m = REGISTRY["lightgbm"](seed=0, gap=18).fit(*_data(600))
+    assert np.isfinite(m.cv_rel_mae_)
+
+
 def test_huber_resists_spikes_that_pull_ridge():
     """Synthetic heavy-tailed changes (code test only): rare large spikes in the training targets."""
     X, y, y0 = _data(800)

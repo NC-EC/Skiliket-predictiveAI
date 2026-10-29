@@ -13,8 +13,9 @@ horizons_minutes: [15, 30, 60]
 evaluation:
   scheme: rolling_origin_growing_window
   purge: horizon_plus_lag_window    # embargo between train end and test start
-  cold_start_criterion: "rel_mae < 1 and 95% block-bootstrap CI upper bound < 1"  # rel_mae = MAE model / MAE persistence, same test split
-  primary_metric: rel_mae      # summarized by the median across splits; MASE (train-scaled) is secondary
+  cold_start_criterion: "geometric mean of rel_mae < 1 and its 95% block-bootstrap CI upper bound < 1"  # rel_mae = MAE model / MAE persistence, same test split
+  primary_metric: rel_mae      # geometric mean across splits (plus median, pooled); MASE (train-scaled) is secondary
+  min_test_frac: 0.5           # drop test splits shorter than half a full test day (fixed before results)
   bootstrap_resamples: 1000
 
 alerts:

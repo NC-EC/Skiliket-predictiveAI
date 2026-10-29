@@ -52,3 +52,26 @@ def test_device_from_file_name_for_old_csvs(tmp_path):
     old = tmp_path / "smoke_dalton_X1_11_h15.csv"
     df.to_csv(old, index=False)
     assert set(summarize.load([str(old)])["device"]) == {"smoke_dalton_X1_11_h15"}
+
+
+def test_short_split_dropped_and_geometric_mean_is_robust(tmp_path):
+    """SYNTHETIC rows (code test only): one 10-window split with a near-zero persistence error gives rel_mae 33."""
+    rows = []
+    for split in range(12):
+        n = 10 if split == 0 else 288
+        rel = 33.0 if split == 0 else 0.8
+        base = {"dataset": "synth", "device": "d", "target": "eco2", "horizon_min": 15, "train_days": 3,
+                "split": split, "n_test": n}
+        rows.append({**base, "model": "persistence", "seed": 0, "rel_mae": 1.0, "mae": 10.0})
+        rows.append({**base, "model": "m", "seed": 0, "rel_mae": rel, "mae": 10.0 * rel})
+    path = tmp_path / "synth.csv"
+    pd.DataFrame(rows).to_csv(path, index=False)
+    df = summarize.load([str(path)])
+
+    kept = summarize.summarize_cells(df, n_resamples=200).set_index("model").loc["m"]
+    assert kept["n_splits"] == 11 and kept["meets_cold_start"]
+    assert kept["geo_rel_mae"] == pytest.approx(0.8) and kept["pooled_rel_mae"] == pytest.approx(0.8)
+
+    raw = summarize.summarize_cells(df, n_resamples=200, min_test_frac=0).set_index("model").loc["m"]
+    assert raw["n_splits"] == 12 and raw["mean_rel_mae"] > 3      # the arithmetic mean is wrecked by one split
+    assert raw["geo_rel_mae"] < 1.1                                # the geometric mean much less so

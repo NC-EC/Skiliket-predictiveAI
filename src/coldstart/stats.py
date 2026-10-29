@@ -25,10 +25,21 @@ def bootstrap_ci(values, n_resamples: int = 1000, alpha: float = 0.05, seed: int
     return float(v.mean()), float(lo), float(hi)
 
 
+def geomean_ci(rel_values, groups=None, **kw):
+    """Geometric mean of relative errors with a percentile bootstrap CI (bootstrap on log, back-transformed).
+    The geometric mean is the recommended average for relative error measures (Hyndman & Koehler 2006): a single
+    split with a near-zero persistence error cannot dominate it the way it dominates the arithmetic mean."""
+    v = np.log(np.clip(np.asarray(rel_values, dtype=float), 1e-12, None))
+    m, lo, hi = bootstrap_ci(v, groups=groups, **kw)
+    return float(np.exp(m)), float(np.exp(lo)), float(np.exp(hi))
+
+
 def meets_cold_start(rel_mae_values, groups=None, **kw) -> bool:
-    """Criterion from the proposal: mean rel_mae (MAE model / MAE persistence on the same test split) < 1 and the
-    upper bound of its 95% (block) bootstrap CI < 1. Pass split ids as `groups` so seeds of one split stay together."""
-    m, _, hi = bootstrap_ci(rel_mae_values, groups=groups, **kw)
+    """Cold-start criterion (proposal, revised 2026-10-28): the GEOMETRIC mean of rel_mae (MAE model / MAE persistence
+    on the same test split) is < 1 and the upper bound of its 95% block-bootstrap CI is < 1. Pass split ids as
+    `groups` so the seeds of one split stay together. Splits with too few test windows are filtered beforehand
+    (scripts/summarize.py --min-test-frac)."""
+    m, _, hi = geomean_ci(rel_mae_values, groups=groups, **kw)
     return m < 1 and hi < 1
 
 

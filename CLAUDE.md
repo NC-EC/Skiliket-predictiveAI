@@ -154,6 +154,15 @@ providers 1/3/4/6 (16 devices x eco2/tvoc x h15/30/60, D=1/2/3/5/7). 306 jobs.
 Then batch 3 (give the user an estimate first): DALTON eco2 h15/30/60, `--models ridge huber policy`, so the policy is
 the new one with `cv_rel_mae`. Random forest and GRU stay as reported results, no more tuning time.
 
+**Alerts (code done 2026-10-29, cloud; not run yet):** `scripts/run_alerts.py` (same splits as the learning curve;
+threshold p90/p95 of the D training days; decision offset chosen on a 30 % training tail at FA/day <= budget 0.5/1/2,
+then the model is refit on all D days and tested with that offset; also `raw` = offset 0; `alarm_frac` because merged
+alarms make an all-day alarm count as one false alarm; `--events` flags test events with a DALTON annotation within
+[onset - 60, onset + 15] min), `scripts/summarize_alerts.py`, `scripts/check_annotation_clock.py` (scans annotation
+clock shifts of -12..+12 h before trusting the annotations; run it first, it only reads the grid cache).
+Plan: clock check during batch 2 (1 process); alerts after batch 2: DALTON eco2 h30, D=3/7/14, persistence/ridge/
+huber/lightgbm/policy, `--events --ann-shift-min <peak if clearly != 0>`.
+
 Notes for the paper (do not act on them now): DALTON's clock time zone is unknown, so hour-of-day features are in each
 device's own clock (fine for per-device models, not comparable across sites); calendar features are what turns the
 learning curve upward from D = 3 on the 4 smoke devices.

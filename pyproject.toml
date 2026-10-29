@@ -8,6 +8,7 @@ dependencies = ["pandas", "numpy", "scikit-learn", "pyyaml", "openpyxl"]
 [project.optional-dependencies]
 dev = ["pytest"]
 models = ["lightgbm", "torch", "scipy"]
+figures = ["matplotlib"]
 
 [build-system]
 requires = ["setuptools>=68"]

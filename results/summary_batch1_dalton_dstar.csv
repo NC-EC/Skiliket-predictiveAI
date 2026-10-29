@@ -1,0 +1,1337 @@
+dataset,device,target,horizon_min,model,d_star,d_star_status,d_star_first,max_days_tested,days_tested
+dalton,A1_101,eco2,15,gru,,untestable,,2.0,1 2
+dalton,A1_101,eco2,15,huber,,untestable,,2.0,1 2
+dalton,A1_101,eco2,15,lightgbm,,untestable,,2.0,1 2
+dalton,A1_101,eco2,15,moving_average,,untestable,,2.0,1 2
+dalton,A1_101,eco2,15,persistence,,untestable,,2.0,1 2
+dalton,A1_101,eco2,15,policy,,untestable,,2.0,1 2
+dalton,A1_101,eco2,15,random_forest,,untestable,,2.0,1 2
+dalton,A1_101,eco2,15,ridge,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,gru,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,huber,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,lightgbm,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,moving_average,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,persistence,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,policy,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,random_forest,,untestable,,2.0,1 2
+dalton,A1_101,eco2,30,ridge,,untestable,1.0,2.0,1 2
+dalton,A1_101,eco2,60,gru,,untestable,,2.0,1 2
+dalton,A1_101,eco2,60,huber,,untestable,,2.0,1 2
+dalton,A1_101,eco2,60,lightgbm,,untestable,,2.0,1 2
+dalton,A1_101,eco2,60,moving_average,,untestable,,2.0,1 2
+dalton,A1_101,eco2,60,persistence,,untestable,,2.0,1 2
+dalton,A1_101,eco2,60,policy,,untestable,,2.0,1 2
+dalton,A1_101,eco2,60,random_forest,,untestable,,2.0,1 2
+dalton,A1_101,eco2,60,ridge,,untestable,,2.0,1 2
+dalton,A2_105,eco2,15,gru,,insufficient,,1.0,1
+dalton,A2_105,eco2,15,huber,,insufficient,,1.0,1
+dalton,A2_105,eco2,15,lightgbm,,insufficient,1.0,1.0,1
+dalton,A2_105,eco2,15,moving_average,,insufficient,,1.0,1
+dalton,A2_105,eco2,15,persistence,,insufficient,,1.0,1
+dalton,A2_105,eco2,15,policy,,insufficient,1.0,1.0,1
+dalton,A2_105,eco2,15,random_forest,,insufficient,,1.0,1
+dalton,A2_105,eco2,15,ridge,,insufficient,1.0,1.0,1
+dalton,A2_105,eco2,30,gru,,insufficient,,1.0,1
+dalton,A2_105,eco2,30,huber,,insufficient,,1.0,1
+dalton,A2_105,eco2,30,lightgbm,,insufficient,,1.0,1
+dalton,A2_105,eco2,30,moving_average,,insufficient,,1.0,1
+dalton,A2_105,eco2,30,persistence,,insufficient,,1.0,1
+dalton,A2_105,eco2,30,policy,,insufficient,,1.0,1
+dalton,A2_105,eco2,30,random_forest,,insufficient,,1.0,1
+dalton,A2_105,eco2,30,ridge,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,gru,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,huber,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,lightgbm,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,moving_average,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,persistence,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,policy,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,random_forest,,insufficient,,1.0,1
+dalton,A2_105,eco2,60,ridge,,insufficient,1.0,1.0,1
+dalton,A3_109,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,15,huber,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,A3_109,eco2,15,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,15,ridge,7.0,unconfirmed,3.0,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,huber,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,30,ridge,7.0,unconfirmed,3.0,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,lightgbm,,untestable,5.0,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,policy,,untestable,2.0,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,random_forest,,untestable,3.0,7.0,1 2 3 5 7
+dalton,A3_109,eco2,60,ridge,2.0,reached,2.0,7.0,1 2 3 5 7
+dalton,A4_120,eco2,15,gru,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,15,huber,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,15,lightgbm,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,15,moving_average,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,15,persistence,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,15,policy,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,15,random_forest,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,15,ridge,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,gru,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,huber,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,lightgbm,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,moving_average,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,persistence,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,policy,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,random_forest,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,30,ridge,,untestable,2.0,3.0,1 2 3
+dalton,A4_120,eco2,60,gru,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,60,huber,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,60,lightgbm,,untestable,2.0,3.0,1 2 3
+dalton,A4_120,eco2,60,moving_average,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,60,persistence,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,60,policy,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,60,random_forest,,untestable,,3.0,1 2 3
+dalton,A4_120,eco2,60,ridge,2.0,reached,2.0,3.0,1 2 3
+dalton,A8_151,eco2,15,gru,,insufficient,,1.0,1
+dalton,A8_151,eco2,15,huber,,insufficient,,1.0,1
+dalton,A8_151,eco2,15,lightgbm,,insufficient,,1.0,1
+dalton,A8_151,eco2,15,moving_average,,insufficient,,1.0,1
+dalton,A8_151,eco2,15,persistence,,insufficient,,1.0,1
+dalton,A8_151,eco2,15,policy,,insufficient,,1.0,1
+dalton,A8_151,eco2,15,random_forest,,insufficient,,1.0,1
+dalton,A8_151,eco2,15,ridge,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,gru,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,huber,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,lightgbm,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,moving_average,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,persistence,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,policy,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,random_forest,,insufficient,,1.0,1
+dalton,A8_151,eco2,30,ridge,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,gru,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,huber,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,lightgbm,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,moving_average,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,persistence,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,policy,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,random_forest,,insufficient,,1.0,1
+dalton,A8_151,eco2,60,ridge,,insufficient,,1.0,1
+dalton,C1_25,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,15,huber,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,15,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,huber,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,30,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,policy,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,C1_25,eco2,60,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,C2_26,eco2,15,gru,,insufficient,,1.0,1
+dalton,C2_26,eco2,15,huber,,insufficient,1.0,1.0,1
+dalton,C2_26,eco2,15,lightgbm,,insufficient,,1.0,1
+dalton,C2_26,eco2,15,moving_average,,insufficient,,1.0,1
+dalton,C2_26,eco2,15,persistence,,insufficient,,1.0,1
+dalton,C2_26,eco2,15,policy,,insufficient,1.0,1.0,1
+dalton,C2_26,eco2,15,random_forest,,insufficient,,1.0,1
+dalton,C2_26,eco2,15,ridge,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,gru,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,huber,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,lightgbm,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,moving_average,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,persistence,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,policy,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,random_forest,,insufficient,,1.0,1
+dalton,C2_26,eco2,30,ridge,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,gru,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,huber,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,lightgbm,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,moving_average,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,persistence,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,policy,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,random_forest,,insufficient,,1.0,1
+dalton,C2_26,eco2,60,ridge,,insufficient,,1.0,1
+dalton,F1_23,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,15,ridge,,never,3.0,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,random_forest,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,30,ridge,,never,3.0,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,lightgbm,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,policy,2.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,random_forest,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,F1_23,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H12_93,eco2,15,gru,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,15,huber,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_93,eco2,15,lightgbm,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,15,moving_average,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,15,persistence,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,15,policy,,untestable,1.0,5.0,1 2 3 5
+dalton,H12_93,eco2,15,random_forest,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,15,ridge,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_93,eco2,30,gru,,untestable,3.0,5.0,1 2 3 5
+dalton,H12_93,eco2,30,huber,3.0,reached,3.0,5.0,1 2 3 5
+dalton,H12_93,eco2,30,lightgbm,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,30,moving_average,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,30,persistence,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,30,policy,,untestable,1.0,5.0,1 2 3 5
+dalton,H12_93,eco2,30,random_forest,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,30,ridge,5.0,unconfirmed,1.0,5.0,1 2 3 5
+dalton,H12_93,eco2,60,gru,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_93,eco2,60,huber,2.0,reached,2.0,5.0,1 2 3 5
+dalton,H12_93,eco2,60,lightgbm,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,60,moving_average,1.0,reached,1.0,5.0,1 2 3 5
+dalton,H12_93,eco2,60,persistence,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,60,policy,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,60,random_forest,,untestable,,5.0,1 2 3 5
+dalton,H12_93,eco2,60,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,H12_94,eco2,15,gru,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,15,huber,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_94,eco2,15,lightgbm,,untestable,2.0,5.0,1 2 3 5
+dalton,H12_94,eco2,15,moving_average,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,15,persistence,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,15,policy,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_94,eco2,15,random_forest,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,15,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,H12_94,eco2,30,gru,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,30,huber,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_94,eco2,30,lightgbm,2.0,reached,2.0,5.0,1 2 3 5
+dalton,H12_94,eco2,30,moving_average,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,30,persistence,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,30,policy,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_94,eco2,30,random_forest,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,30,ridge,3.0,reached,1.0,5.0,1 2 3 5
+dalton,H12_94,eco2,60,gru,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,H12_94,eco2,60,huber,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,60,lightgbm,3.0,reached,1.0,5.0,1 2 3 5
+dalton,H12_94,eco2,60,moving_average,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,60,persistence,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,60,policy,5.0,unconfirmed,1.0,5.0,1 2 3 5
+dalton,H12_94,eco2,60,random_forest,,untestable,,5.0,1 2 3 5
+dalton,H12_94,eco2,60,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,H1_41,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_41,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,15,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,lightgbm,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,30,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,random_forest,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_42,eco2,60,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,policy,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,15,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,policy,14.0,unconfirmed,5.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,30,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,random_forest,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_43,eco2,60,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,15,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,30,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,gru,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,lightgbm,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,policy,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_44,eco2,60,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,15,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,30,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,lightgbm,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H1_45,eco2,60,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,lightgbm,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,15,ridge,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,lightgbm,,never,2.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,policy,,never,2.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,30,ridge,7.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,gru,,never,7.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,lightgbm,,never,3.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,policy,,never,7.0,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_11,eco2,60,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,huber,14.0,unconfirmed,5.0,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,lightgbm,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_12,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_13,eco2,60,ridge,,never,3.0,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,random_forest,,never,7.0,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,policy,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_14,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_15,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,15,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,30,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H2_17,eco2,60,ridge,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,policy,,never,1.0,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_61,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,huber,,never,7.0,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,huber,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,lightgbm,,never,2.0,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,moving_average,1.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,policy,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,random_forest,,never,7.0,14.0,1 2 3 5 7 14
+dalton,H3_62,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H3_63,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,lightgbm,,never,2.0,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_11,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_12,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_13,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_14,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H4_15,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H5_21,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,gru,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,random_forest,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H5_22,eco2,60,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H6_111,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_111,eco2,15,huber,,untestable,2.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,15,lightgbm,7.0,unconfirmed,1.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_111,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_111,eco2,15,policy,7.0,unconfirmed,7.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,15,random_forest,,untestable,2.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,15,ridge,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,lightgbm,7.0,unconfirmed,3.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,policy,7.0,unconfirmed,2.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,random_forest,7.0,unconfirmed,2.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,30,ridge,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,H6_111,eco2,60,gru,,untestable,1.0,5.0,1 2 3 5
+dalton,H6_111,eco2,60,huber,,untestable,,5.0,1 2 3 5
+dalton,H6_111,eco2,60,lightgbm,2.0,reached,2.0,5.0,1 2 3 5
+dalton,H6_111,eco2,60,moving_average,,untestable,,5.0,1 2 3 5
+dalton,H6_111,eco2,60,persistence,,untestable,,5.0,1 2 3 5
+dalton,H6_111,eco2,60,policy,2.0,reached,2.0,5.0,1 2 3 5
+dalton,H6_111,eco2,60,random_forest,,untestable,1.0,5.0,1 2 3 5
+dalton,H6_111,eco2,60,ridge,,untestable,2.0,5.0,1 2 3 5
+dalton,H6_112,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,15,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,15,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,30,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,lightgbm,7.0,unconfirmed,7.0,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_112,eco2,60,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,lightgbm,7.0,unconfirmed,7.0,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,30,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_113,eco2,60,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,30,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,lightgbm,,untestable,5.0,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_114,eco2,60,ridge,,untestable,3.0,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,30,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H6_115,eco2,60,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,huber,2.0,reached,2.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,lightgbm,,untestable,5.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,policy,3.0,reached,3.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,huber,1.0,reached,1.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,lightgbm,3.0,reached,3.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,policy,3.0,reached,3.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,random_forest,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,30,ridge,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,huber,2.0,reached,2.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,lightgbm,7.0,unconfirmed,7.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,moving_average,1.0,reached,1.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,policy,3.0,reached,3.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,random_forest,7.0,unconfirmed,7.0,7.0,1 2 3 5 7
+dalton,H7_71,eco2,60,ridge,7.0,unconfirmed,7.0,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,30,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,policy,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,H7_72,eco2,60,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,H8_81,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,15,huber,2.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,huber,2.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,policy,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,huber,2.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,policy,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_81,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_82,eco2,60,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,huber,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,15,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,lightgbm,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,policy,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,30,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,huber,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,random_forest,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_83,eco2,60,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,15,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,policy,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,30,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,random_forest,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_84,eco2,60,ridge,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,lightgbm,,never,3.0,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,huber,,never,7.0,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,lightgbm,,never,1.0,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,policy,,never,3.0,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,lightgbm,,never,3.0,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,policy,,never,3.0,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H8_85,eco2,60,ridge,,never,5.0,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,huber,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,huber,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H9_98,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,15,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,30,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,gru,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,huber,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,lightgbm,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,H9_99,eco2,60,ridge,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,huber,2.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,random_forest,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,15,ridge,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,gru,,never,7.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,huber,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,lightgbm,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,policy,14.0,unconfirmed,5.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,random_forest,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,30,ridge,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,gru,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,huber,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,lightgbm,14.0,unconfirmed,1.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,policy,14.0,unconfirmed,1.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,random_forest,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,R1_51,eco2,60,ridge,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,gru,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,huber,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,lightgbm,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,15,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,gru,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,huber,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,lightgbm,,never,5.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,policy,14.0,unconfirmed,14.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,30,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,gru,,never,7.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,huber,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,lightgbm,,never,5.0,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,policy,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,R1_52,eco2,60,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,gru,,never,7.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,huber,1.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,lightgbm,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,policy,5.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,random_forest,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,15,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,gru,5.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,huber,2.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,lightgbm,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,policy,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,random_forest,7.0,reached,7.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,30,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,gru,5.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,huber,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,lightgbm,3.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,policy,5.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,random_forest,1.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_53,eco2,60,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,gru,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,huber,1.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,lightgbm,5.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,random_forest,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,15,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,gru,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,huber,1.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,lightgbm,5.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,policy,5.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,random_forest,5.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,30,ridge,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,gru,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,huber,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,lightgbm,5.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,policy,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,random_forest,1.0,reached,1.0,14.0,1 2 3 5 7 14
+dalton,R1_54,eco2,60,ridge,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,gru,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,huber,3.0,reached,3.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,lightgbm,14.0,unconfirmed,2.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,policy,7.0,reached,2.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,15,ridge,14.0,unconfirmed,2.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,gru,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,huber,5.0,reached,5.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,lightgbm,,never,2.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,moving_average,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,persistence,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,policy,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,random_forest,,never,,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,30,ridge,,never,1.0,14.0,1 2 3 5 7 14
+dalton,R2_102,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,R2_102,eco2,60,huber,,untestable,,7.0,1 2 3 5 7
+dalton,R2_102,eco2,60,lightgbm,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,R2_102,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,R2_102,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,R2_102,eco2,60,policy,,untestable,,7.0,1 2 3 5 7
+dalton,R2_102,eco2,60,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,R2_102,eco2,60,ridge,7.0,unconfirmed,7.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,huber,2.0,reached,2.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,lightgbm,,untestable,3.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,policy,,untestable,3.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,random_forest,,untestable,3.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,15,ridge,,untestable,2.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,huber,2.0,reached,2.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,lightgbm,3.0,reached,3.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,policy,3.0,reached,3.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,random_forest,7.0,unconfirmed,2.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,30,ridge,,untestable,2.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,gru,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,huber,,untestable,5.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,lightgbm,2.0,reached,2.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,policy,5.0,reached,5.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,random_forest,7.0,unconfirmed,3.0,7.0,1 2 3 5 7
+dalton,R3_108,eco2,60,ridge,,untestable,1.0,7.0,1 2 3 5 7
+dalton,R4_22,eco2,15,gru,,insufficient,,1.0,1
+dalton,R4_22,eco2,15,huber,,insufficient,,1.0,1
+dalton,R4_22,eco2,15,lightgbm,,insufficient,,1.0,1
+dalton,R4_22,eco2,15,moving_average,,insufficient,1.0,1.0,1
+dalton,R4_22,eco2,15,persistence,,insufficient,,1.0,1
+dalton,R4_22,eco2,15,policy,,insufficient,,1.0,1
+dalton,R4_22,eco2,15,random_forest,,insufficient,,1.0,1
+dalton,R4_22,eco2,15,ridge,,insufficient,,1.0,1
+dalton,R4_23,eco2,15,gru,,insufficient,1.0,1.0,1
+dalton,R4_23,eco2,15,huber,,insufficient,,1.0,1
+dalton,R4_23,eco2,15,lightgbm,,insufficient,1.0,1.0,1
+dalton,R4_23,eco2,15,moving_average,,insufficient,1.0,1.0,1
+dalton,R4_23,eco2,15,persistence,,insufficient,,1.0,1
+dalton,R4_23,eco2,15,policy,,insufficient,,1.0,1
+dalton,R4_23,eco2,15,random_forest,,insufficient,1.0,1.0,1
+dalton,R4_23,eco2,15,ridge,,insufficient,,1.0,1
+dalton,R4_24,eco2,15,gru,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,15,huber,3.0,reached,3.0,7.0,1 2 3 5 7
+dalton,R4_24,eco2,15,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,15,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,15,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,15,policy,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,15,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,15,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,gru,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,huber,,untestable,5.0,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,lightgbm,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,moving_average,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,persistence,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,policy,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,random_forest,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,30,ridge,,untestable,,7.0,1 2 3 5 7
+dalton,R4_24,eco2,60,gru,,untestable,,5.0,1 2 3 5
+dalton,R4_24,eco2,60,huber,,untestable,,5.0,1 2 3 5
+dalton,R4_24,eco2,60,lightgbm,,untestable,,5.0,1 2 3 5
+dalton,R4_24,eco2,60,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R4_24,eco2,60,persistence,,untestable,,5.0,1 2 3 5
+dalton,R4_24,eco2,60,policy,,untestable,,5.0,1 2 3 5
+dalton,R4_24,eco2,60,random_forest,,untestable,1.0,5.0,1 2 3 5
+dalton,R4_24,eco2,60,ridge,,untestable,,5.0,1 2 3 5
+dalton,R5_71,eco2,15,gru,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,15,huber,2.0,reached,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,15,lightgbm,5.0,unconfirmed,1.0,5.0,1 2 3 5
+dalton,R5_71,eco2,15,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_71,eco2,15,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_71,eco2,15,policy,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,R5_71,eco2,15,random_forest,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,15,ridge,2.0,reached,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,30,gru,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,30,huber,2.0,reached,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,30,lightgbm,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,30,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_71,eco2,30,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_71,eco2,30,policy,5.0,unconfirmed,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,30,random_forest,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,30,ridge,2.0,reached,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,60,gru,,untestable,1.0,5.0,1 2 3 5
+dalton,R5_71,eco2,60,huber,,untestable,3.0,5.0,1 2 3 5
+dalton,R5_71,eco2,60,lightgbm,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,60,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_71,eco2,60,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_71,eco2,60,policy,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,60,random_forest,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_71,eco2,60,ridge,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_72,eco2,15,gru,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,15,huber,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,15,lightgbm,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,15,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,15,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,15,policy,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,15,random_forest,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,15,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,R5_72,eco2,30,gru,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,30,huber,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,30,lightgbm,,untestable,1.0,5.0,1 2 3 5
+dalton,R5_72,eco2,30,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,30,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,30,policy,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,30,random_forest,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_72,eco2,30,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,R5_72,eco2,60,gru,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,60,huber,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,60,lightgbm,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_72,eco2,60,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,60,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,60,policy,,untestable,,5.0,1 2 3 5
+dalton,R5_72,eco2,60,random_forest,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_72,eco2,60,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,R5_73,eco2,15,gru,,untestable,3.0,5.0,1 2 3 5
+dalton,R5_73,eco2,15,huber,2.0,reached,2.0,5.0,1 2 3 5
+dalton,R5_73,eco2,15,lightgbm,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,15,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,15,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,15,policy,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,R5_73,eco2,15,random_forest,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_73,eco2,15,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,R5_73,eco2,30,gru,,untestable,3.0,5.0,1 2 3 5
+dalton,R5_73,eco2,30,huber,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_73,eco2,30,lightgbm,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,30,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,30,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,30,policy,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,30,random_forest,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_73,eco2,30,ridge,3.0,reached,3.0,5.0,1 2 3 5
+dalton,R5_73,eco2,60,gru,,untestable,3.0,5.0,1 2 3 5
+dalton,R5_73,eco2,60,huber,,untestable,2.0,5.0,1 2 3 5
+dalton,R5_73,eco2,60,lightgbm,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,R5_73,eco2,60,moving_average,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,60,persistence,,untestable,,5.0,1 2 3 5
+dalton,R5_73,eco2,60,policy,5.0,unconfirmed,5.0,5.0,1 2 3 5
+dalton,R5_73,eco2,60,random_forest,,untestable,3.0,5.0,1 2 3 5
+dalton,R5_73,eco2,60,ridge,1.0,reached,1.0,5.0,1 2 3 5

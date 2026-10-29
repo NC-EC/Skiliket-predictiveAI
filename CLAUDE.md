@@ -119,13 +119,40 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   R1_51 check CSV huber D* = 3 as expected. Policy loses at D <= 3 on C1_25 (picks LightGBM on a CV score < 1, then
   loses on test): the validation score is optimistic on very short histories.
 
+## Done 2026-10-28 (night) / 2026-10-29
+- Cloud commits merged: policy candidates = ridge + huber only (LightGBM's score is optimistic: validated on its own
+  early-stopping tail); the runner writes `cv_rel_mae`; `summarize.py` recomputes the policy from it, only for the
+  files that carry the column (older CSVs keep the runner's policy rows). Stable D* statuses: `reached`,
+  `unconfirmed` (D* = largest D tested), `insufficient` (one D tested), `never` (tested at the design max, no stable D),
+  `untestable` (too short for the design max). `scripts/figures.py`: share of devices meeting the criterion vs D.
+- DALTON H2_16 / R4_21 (0 days): 86-92 % of their rows are Valid=0 or zero-filled by the authors (4.6 h and 7 h
+  survive) and the all-channel freeze rule removes ~70 % of the rest (junk such as CO2 = 15). Adapter unchanged.
+  11 DALTON devices hold < 2 days and are excluded by the runner: A5_121 0.0, H2_16 0.0, R4_21 0.0, H10_103 0.9,
+  H10_104 0.8, H11_106 1.4, H11_107 1.4, H13_95 1.8, H13_96 1.8, A6_122 2.0, A7_113 2.0 days. R4_22 / R4_23 have 2.2
+  days at h15 and none at h30/h60.
+- **Batch 1 done** (2026-10-28 16:26 -> 10-29 05:47, 13.3 h, 5 workers): DALTON eco2, 57 devices x h15/30/60, 167
+  CSVs in `results/runs/` (gitignored). Summary committed: `results/summary_batch1_dalton_{cells,dstar,fraction}.csv`
+  (12,040 rows dropped as short test splits). Batch-1 policy rows are the OLD policy (ridge/huber/lightgbm), except
+  R4_24 h60 (re-run with the new code); batch 3 replaces them.
+  Devices meeting the criterion at D = 1/2/3/5/7/14 (%): huber h15 5/17/24/34/42/56, h30 4/13/20/26/31/47,
+  h60 0/8/10/20/28/45; ridge h15 2/6/18/30/24/38; LightGBM h60 5/15/16/42/40/42. Devices tested per D (h15):
+  57/52/51/50/45/34. Stable D* reached (median D*): huber 21 (3) / 14 (3) / 12 (5) at h15/30/60, ridge 14/15/17 (5).
+- **Urbino in batch 1 was wrong**: run at `--cadence 5`, but 8-9 % of its steps are 10 min, so the 5-min grid cut
+  every segment to ~1 h (7709 segments, none >= 3 h; at 10 min: 128 segments, median 17 h). h30/h60 had ~1 window and
+  h15 used only 1-h fragments: h15 output moved to `results/runs/discarded_urbino_c5/` and not used.
+- `run_batch.py` picks the cadence per device (`native_cadence`): 5 min if >= 99 % of the raw time steps are <= 7.5 min
+  (the grid's segment limit), else 10 min (then only h30/h60). Urbino -> 10; all EDIAQI providers 1/3/4/6 -> 5
+  (99.3-100 %); DALTON is 1 Hz, fixed at 5 without loading.
+- LightGBM with < 20 validation (or fit) windows trains a fixed 100 trees, no early stopping, `cv_rel_mae_` NaN (a
+  1-window tail crashed DALTON R4_24 h60). The runner logs an error in one D and keeps the other D (the failed D writes
+  no rows; "FAILED train lengths" at the end of the job log). Grid cache writes are atomic (tmp + rename).
+
 ## CURRENT TASK
-**Batch 1 running** (started 2026-10-28 16:26, detached: `scripts/run_batch.py --batch 1 --workers 5`, progress in
-`results/runs/batch1.log`, per-job logs in `results/runs/logs/`; resumable: rerun the same command and finished CSVs
-are skipped). DALTON eco2 (68 devices x h15/30/60, D=1/2/3/5/7/14) + Urbino (3 rooms x h15/30/60, D=1/3/7/14/30/60),
-213 jobs. Estimate ~65-70 CPU-h, ~14-16 h wall (DALTON ~11.7k cells x ~11 s; Urbino ~16k cells, ~295 splits per room).
-Then: summarize (`results/summary_batch1_*`; commit summaries, not per-split CSVs if large), batch 2 (DALTON tvoc +
-EDIAQI). Random forest and GRU stay as reported results, no more tuning time.
+**Batch 2 running** (`scripts/run_batch.py --batch 2 --workers 5`, log `results/runs/batch2.log`; resumable): Urbino
+eco2 at 10 min x h30/h60 (D=1/3/7/14/30/60; first, longest jobs), DALTON tvoc (68 devices x h15/30/60), EDIAQI
+providers 1/3/4/6 (16 devices x eco2/tvoc x h15/30/60, D=1/2/3/5/7). 306 jobs.
+Then batch 3 (give the user an estimate first): DALTON eco2 h15/30/60, `--models ridge huber policy`, so the policy is
+the new one with `cv_rel_mae`. Random forest and GRU stay as reported results, no more tuning time.
 
 Notes for the paper (do not act on them now): DALTON's clock time zone is unknown, so hour-of-day features are in each
 device's own clock (fine for per-device models, not comparable across sites); calendar features are what turns the

@@ -4,8 +4,13 @@ Cold-start criterion (stats.meets_cold_start): GEOMETRIC mean of rel_mae < 1 and
 < 1, splits as blocks so the seeds of one split stay together.
 
 D* (stable) = the smallest training length D that meets the criterion and keeps meeting it at every larger D the device
-was tested on. d_star_status says why D* is NaN: "never" (the device was tested at the largest D of the design and no
-stable D exists) or "untestable" (too few days for the largest D, and no stable D within the D it has). d_star_first
+was tested on. d_star_status:
+  "reached"      stable D* confirmed by at least one larger D;
+  "unconfirmed"  D* is the largest D tested (meets there, nothing larger to confirm it); d_star is kept;
+  "insufficient" the device was tested at a single D, so stability cannot be judged; d_star is NaN;
+  "never"        tested at the largest D of the design and no stable D exists; d_star is NaN;
+  "untestable"   too few days for the largest D of the design, and no stable D within the D it has; d_star is NaN.
+d_star_first
 (smallest D that meets it once) is kept for comparison. {out}_fraction.csv: share of devices meeting the criterion at
 each D among the devices tested at that D (the main figure).
 
@@ -142,8 +147,10 @@ def d_star(cells: pd.DataFrame) -> pd.DataFrame:
         stable = np.flip(np.logical_and.accumulate(np.flip(meets)))
         k = dict(zip(KEYS, key))
         ds = float(days[stable][0]) if stable.any() else np.nan
-        if np.isfinite(ds):
-            status = "reached"
+        if len(days) < 2:
+            ds, status = np.nan, "insufficient"
+        elif np.isfinite(ds):
+            status = "unconfirmed" if ds == days.max() else "reached"
         else:
             status = "never" if days.max() >= design_max[k["dataset"], k["target"], k["horizon_min"]] else "untestable"
         rows.append({**k, "d_star": ds, "d_star_status": status,

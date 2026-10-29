@@ -97,7 +97,7 @@ def test_stable_d_star_status_and_fraction():
     assert ds.loc["flicker", "d_star"] == 7 and ds.loc["flicker", "d_star_first"] == 1
     assert np.isnan(ds.loc["lost", "d_star"]) and ds.loc["lost", "d_star_status"] == "never"
     assert ds.loc["lost", "d_star_first"] == 3
-    assert ds.loc["short_ok", "d_star"] == 3
+    assert ds.loc["short_ok", "d_star"] == 3 and ds.loc["short_ok", "d_star_status"] == "unconfirmed"
     assert ds.loc["short_no", "d_star_status"] == "untestable" and ds.loc["short_no", "max_days_tested"] == 3
 
     fr = summarize.fraction_meeting(cells).set_index("train_days")
@@ -125,3 +125,21 @@ def test_policy_recomputed_from_validation_scores():
     # CSVs without validation scores keep the runner's policy rows
     old = pd.DataFrame(rows).drop(columns="cv_rel_mae")
     assert summarize.recompute_policy(old).equals(old)
+
+
+def test_single_d_is_insufficient_and_largest_d_is_unconfirmed():
+    cells = _cells({
+        "one_d_meets": {1: True},                    # one D tested: stability cannot be judged
+        "one_d_fails": {1: False},
+        "last_only": {1: False, 3: False, 7: True},  # meets only at its largest D: unconfirmed
+        "full": {1: False, 3: True, 7: True, 14: True},
+    })
+    ds = summarize.d_star(cells).set_index("device")
+    for dev in ("one_d_meets", "one_d_fails"):
+        assert ds.loc[dev, "d_star_status"] == "insufficient" and np.isnan(ds.loc[dev, "d_star"])
+    assert ds.loc["one_d_meets", "d_star_first"] == 1
+    assert ds.loc["last_only", ["d_star", "d_star_status"]].tolist() == [7, "unconfirmed"]
+    assert ds.loc["full", ["d_star", "d_star_status"]].tolist() == [3, "reached"]
+    # meeting at 14 = the design maximum with a smaller D failing: still unconfirmed, not reached
+    edge = summarize.d_star(_cells({"a": {7: False, 14: True}, "b": {1: True, 14: True}})).set_index("device")
+    assert edge.loc["a", "d_star_status"] == "unconfirmed" and edge.loc["b", "d_star_status"] == "reached"

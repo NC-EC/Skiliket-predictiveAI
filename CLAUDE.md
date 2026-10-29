@@ -160,7 +160,11 @@ then the model is refit on all D days and tested with that offset; also `raw` = 
 alarms make an all-day alarm count as one false alarm; `--events` flags test events with a DALTON annotation within
 [onset - 60, onset + 15] min), `scripts/summarize_alerts.py`, `scripts/check_annotation_clock.py` (scans annotation
 clock shifts of -12..+12 h before trusting the annotations; run it first, it only reads the grid cache).
-Plan: clock check during batch 2 (1 process); alerts after batch 2: DALTON eco2 h30, D=3/7/14, persistence/ridge/
+Clock check done (`results/checks/annotation_clock.csv`, 38 devices with annotations): no clock offset (median share
+0.44 at 0, peak 0.46 at -30 min, no peak near +-330 min), so `--ann-shift-min 0`. But the link is weak: chance level
+(shifts >= 4 h) is 0.32, so only +0.10 above chance; 26/38 devices above their own chance level. Annotations are dense
+(median 218 per device), so they are a descriptive check of alerts, not ground truth for events.
+Plan: alerts after batch 2: DALTON eco2 h30, D=3/7/14, persistence/ridge/
 huber/lightgbm/policy, `--events --ann-shift-min <peak if clearly != 0>`.
 
 Notes for the paper (do not act on them now): DALTON's clock time zone is unknown, so hour-of-day features are in each

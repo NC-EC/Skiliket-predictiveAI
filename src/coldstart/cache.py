@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import importlib
 import inspect
+import os
 import pickle
 from pathlib import Path
 
@@ -49,6 +50,9 @@ def load_grid(dataset: str, path: str, device: str | None, target: str, cadence:
     grid, chs = build_grid(df, target, cadence)
     if f is not None:
         f.parent.mkdir(parents=True, exist_ok=True)
-        with open(f, "wb") as fh:
+        # write then rename: two runner processes building the same entry never leave a half-written file to read
+        tmp = f.with_suffix(f".{os.getpid()}.tmp")
+        with open(tmp, "wb") as fh:
             pickle.dump({"path": str(Path(path).resolve()), "grid": grid, "channels": chs, "name": meta.name}, fh)
+        os.replace(tmp, f)
     return grid, chs, meta.name

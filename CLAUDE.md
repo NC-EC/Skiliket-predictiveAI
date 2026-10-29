@@ -151,8 +151,11 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
 **Batch 2 running** (`scripts/run_batch.py --batch 2 --workers 5`, log `results/runs/batch2.log`; resumable): Urbino
 eco2 at 10 min x h30/h60 (D=1/3/7/14/30/60; first, longest jobs), DALTON tvoc (68 devices x h15/30/60), EDIAQI
 providers 1/3/4/6 (16 devices x eco2/tvoc x h15/30/60, D=1/2/3/5/7). 306 jobs.
-Then batch 3 (give the user an estimate first): DALTON eco2 h15/30/60, `--models ridge huber policy`, so the policy is
-the new one with `cv_rel_mae`. Random forest and GRU stay as reported results, no more tuning time.
+Batch 2 ETA (14:47, 29 Oct): ~31 Oct 01:00-06:00; Urbino D=30/60 splits dominate (~297 test days per D).
+Then batch 3: `run_batch.py --batch 3` (added 29 Oct: DALTON eco2 h15/30/60, ridge huber policy, outputs in
+`results/runs_batch3/`). Estimate ~6-7 h with 5 workers (ridge+huber are ~46 % of batch 1's fit time per split).
+When batch 2 is down to the Urbino jobs (cores idle), start batch 3 and the alerts with the free workers (e.g.
+`--workers 2` each) instead of waiting for Urbino to finish. Random forest and GRU stay as reported results, no more tuning time.
 
 **Alerts (code done 2026-10-29, cloud; not run yet):** `scripts/run_alerts.py` (same splits as the learning curve;
 threshold p90/p95 of the D training days; decision offset chosen on a 30 % training tail at FA/day <= budget 0.5/1/2,

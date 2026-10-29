@@ -36,3 +36,13 @@ def test_native_cadence_from_time_steps():
     assert batch.native_cadence(t0 + pd.to_timedelta(pd.Series(steps).cumsum(), "min")) == 10
     assert batch.native_cadence(t0 + pd.to_timedelta(range(0, 30000, 30), "min")) is None
     assert batch.HORIZONS[10] == [30, 60]
+
+
+def test_batch3_runs_linear_models_and_policy_in_its_own_folder(tmp_path, monkeypatch):
+    assert batch.BATCH_MODELS[3] == ["ridge", "huber", "policy"] and batch.BATCH_OUT[3] != batch.BATCH_OUT[1]
+    seen = {}
+    monkeypatch.setattr(batch.subprocess, "run", lambda cmd, **k: seen.setdefault("cmd", cmd) and type("R", (), {"returncode": 0}))
+    (tmp_path / "logs").mkdir()
+    batch.run(("dalton", "p", "H1_41", "eco2", 5, ["1", "3"], 15), 5, tmp_path, batch.BATCH_MODELS[3])
+    cmd = seen["cmd"]
+    assert cmd[cmd.index("--models") + 1:cmd.index("--parallel")] == ["ridge", "huber", "policy"]

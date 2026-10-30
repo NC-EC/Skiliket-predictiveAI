@@ -129,3 +129,21 @@ def test_run_alerts_devices_all_expands_from_adapter(tmp_path, monkeypatch, synt
     ra.main(["--dataset", "fakeds", "--path", ".", "--devices", "all", "--days", "7", "--models", "persistence",
              "--alert-q", "90", "--budgets", "1", "--out", str(out)])
     assert set(pd.read_csv(out)["device"]) == {"A1", "B2"}
+
+
+def test_run_alerts_is_resumable_per_device(tmp_path, monkeypatch, synth_grid):
+    """SYNTHETIC grid: finished devices are saved as parts and skipped on a re-run."""
+    ra = _load("run_alerts")
+    calls = []
+    real = ra.run_device
+    monkeypatch.setattr(ra, "load_grid", lambda *a, **k: (*synth_grid, "synthetic"))
+    monkeypatch.setattr(ra, "run_device", lambda a, d: calls.append(d) or real(a, d))
+    out = tmp_path / "a.csv"
+    args = ["--dataset", "x", "--path", ".", "--devices", "A1", "B2", "--days", "7", "--models", "persistence",
+            "--alert-q", "90", "--budgets", "1", "--out", str(out)]
+    ra.main(args)
+    assert (tmp_path / "a_parts" / "A1.csv").exists() and calls == ["A1", "B2"]
+    n = len(pd.read_csv(out))
+    (tmp_path / "a_parts" / "B2.csv").unlink()  # as if B2 had been interrupted
+    ra.main(args)
+    assert calls == ["A1", "B2", "B2"] and len(pd.read_csv(out)) == n

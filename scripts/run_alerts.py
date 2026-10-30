@@ -18,7 +18,8 @@ annotated events are counted separately.
 alarm_frac = share of test origins in the alarm state: consecutive alarms merge into one notification, so a model that
 alarms all day counts as one false alarm; alarm_frac exposes that.
 
-One CSV row per (device, D, split, model, q, mode, budget). Summaries: scripts/summarize_alerts.py.
+One CSV row per (device, D, split, model, q, mode, budget). Each device is saved to <out>_parts/<device>.csv as soon as
+it finishes; re-running the same command skips finished devices (resumable) and rebuilds <out> from the parts. Summaries: scripts/summarize_alerts.py.
 
   python scripts/run_alerts.py --dataset dalton --path data/raw/dalton --devices H1_41 R1_51 --target eco2 \
       --horizon 30 --days 3 7 14 --workers 4 --out results/alerts/dalton_eco2_h30.csv
@@ -155,14 +156,29 @@ def _core(r: dict) -> dict:
     return {k: r[k] for k in ("n_events", "hits", "recall", "false_alarms", "fa_per_day", "median_lead_min")}
 
 
+def _parts_dir(out: str) -> Path:
+    return Path(out).with_name(Path(out).stem + "_parts")
+
+
 def _safe(args):
+    """Run one device and write its rows to <out>_parts/<device>.csv at once, so an interrupted run keeps every
+    finished device. A device that fails or yields no rows leaves no part and is retried on the next run."""
     a, device = args
+    part = _parts_dir(a.out) / f"{device}.csv"
+    if part.exists():
+        print(f"{device}: already done ({part.name})", flush=True)
+        return
     try:
-        return run_device(a, device)
+        rows = run_device(a, device)
     except Exception:  # noqa: BLE001 - one device must not stop the others
         traceback.print_exc()
         print(f"{device} FAILED", flush=True)
-        return []
+        return
+    if rows:
+        tmp = part.with_suffix(".tmp")
+        pd.DataFrame(rows).to_csv(tmp, index=False)
+        tmp.replace(part)  # atomic: a half-written part never looks finished
+        print(f"{device}: {len(rows)} rows", flush=True)
 
 
 def main(argv=None):
@@ -170,18 +186,21 @@ def main(argv=None):
     if a.devices == ["all"]:
         import importlib
         a.devices = importlib.import_module(f"coldstart.adapters.{a.dataset}").devices(a.path)
+    _parts_dir(a.out).mkdir(parents=True, exist_ok=True)
     jobs = [(a, d) for d in a.devices]
     if a.workers > 1:
         with ProcessPoolExecutor(a.workers) as pool:
-            parts = list(pool.map(_safe, jobs))
+            list(pool.map(_safe, jobs))
     else:
-        parts = [_safe(j) for j in jobs]
-    rows = [r for p in parts for r in p]
-    if not rows:
+        for j in jobs:
+            _safe(j)
+    parts = [_parts_dir(a.out) / f"{d}.csv" for d in a.devices]
+    found = [f for f in parts if f.exists()]
+    if not found:
         raise SystemExit("no rows")
-    Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-    pd.DataFrame(rows).to_csv(a.out, index=False)
-    print(f"{len(rows)} rows -> {a.out}")
+    out = pd.concat([pd.read_csv(f) for f in found], ignore_index=True)
+    out.to_csv(a.out, index=False)
+    print(f"{len(out)} rows from {len(found)} of {len(parts)} devices -> {a.out}")
 
 
 if __name__ == "__main__":

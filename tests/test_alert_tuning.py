@@ -113,3 +113,19 @@ def test_run_alerts_end_to_end(tmp_path, monkeypatch, synth_grid):
     assert d["fa_per_day"] == pytest.approx(sub["false_alarms"].sum() / sub["span_days"].sum())
     assert r["n_devices"] == 1 and r["budget"] == 1
     assert ov[ov["mode"] == "raw"]["budget"].isna().all()
+
+
+def test_run_alerts_devices_all_expands_from_adapter(tmp_path, monkeypatch, synth_grid):
+    """SYNTHETIC grid; 'all' asks the adapter for its device list."""
+    import sys
+    import types
+
+    ra = _load("run_alerts")
+    fake = types.ModuleType("coldstart.adapters.fakeds")
+    fake.devices = lambda path: ["A1", "B2"]
+    monkeypatch.setitem(sys.modules, "coldstart.adapters.fakeds", fake)
+    monkeypatch.setattr(ra, "load_grid", lambda *a, **k: (*synth_grid, "synthetic"))
+    out = tmp_path / "a.csv"
+    ra.main(["--dataset", "fakeds", "--path", ".", "--devices", "all", "--days", "7", "--models", "persistence",
+             "--alert-q", "90", "--budgets", "1", "--out", str(out)])
+    assert set(pd.read_csv(out)["device"]) == {"A1", "B2"}

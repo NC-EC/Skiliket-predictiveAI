@@ -46,7 +46,7 @@ def parse(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--dataset", required=True)
     p.add_argument("--path", required=True)
-    p.add_argument("--devices", nargs="+", required=True)
+    p.add_argument("--devices", nargs="+", required=True, help="device ids, or 'all' for every device of the adapter")
     p.add_argument("--target", default="eco2")
     p.add_argument("--cadence", type=int, default=5)
     p.add_argument("--horizon", type=int, default=30)
@@ -167,6 +167,9 @@ def _safe(args):
 
 def main(argv=None):
     a = parse(argv)
+    if a.devices == ["all"]:
+        import importlib
+        a.devices = importlib.import_module(f"coldstart.adapters.{a.dataset}").devices(a.path)
     jobs = [(a, d) for d in a.devices]
     if a.workers > 1:
         with ProcessPoolExecutor(a.workers) as pool:

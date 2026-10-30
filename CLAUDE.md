@@ -147,15 +147,25 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   1-window tail crashed DALTON R4_24 h60). The runner logs an error in one D and keeps the other D (the failed D writes
   no rows; "FAILED train lengths" at the end of the job log). Grid cache writes are atomic (tmp + rename).
 
+## Done 2026-10-29 / 2026-10-30 (batch 2)
+- **Batch 2 done** (10-29 10:28 -> 10-30 10:49, 24.4 h, 5 workers, 306 jobs): Urbino eco2 at 10 min x h30/h60
+  (D=1/3/7/14/30/60; 6.6-8 h per job), DALTON tvoc (h15/30/60), EDIAQI providers 1/3/4/6 (16 devices x eco2/tvoc x
+  h15/30/60, D=1/2/3/5/7). 37 failed jobs, all expected (the 11 short DALTON devices x 3 horizons + R4_22/R4_23 at
+  h30/h60); no "D=... FAILED" in any log. Summaries committed: `results/summary_batch2_{dalton_tvoc,ediaqi,urbino}_*`.
+- DALTON tvoc is harder than eco2: huber meets at D=14 on 29/18/9 % of devices (h15/30/60) vs eco2 56/47/45 %; median
+  geometric rel_mae ~1.00 at D=14. LightGBM is best at h60 (30 % at D=14).
+- EDIAQI: ~10 test splits per cell and D <= 7, so the CI rarely clears 1; huber eco2 meets on 19-25 % at D=7 (median
+  0.97-1.03, still falling); tvoc almost never (median huber 1.07-1.27 at D=7). The policy sits at ~1.00 (persistence).
+- Urbino: no cell meets the criterion overall. `scripts/check_urbino.py` (results/checks/urbino_*.csv): by calendar
+  (`--calendar-only`, weekday vs weekend/Italian holiday 2024; the class/no_class split by persistence MAE uses
+  rel_mae's denominator, secondary only) huber on weekdays meets from D=7 at h30 (0.96) and D=14 at h60 (0.94), pooled
+  0.85-0.90; weekends/holidays every model loses on the geometric mean. By room: von_neumann 0.87-0.92, olivetti
+  0.91-0.94, turing 1.00-1.10 (never). Policy threshold 0.95 (sensitivity only) adds 3 olivetti cells.
+
 ## CURRENT TASK
-**Batch 2 running** (`scripts/run_batch.py --batch 2 --workers 5`, log `results/runs/batch2.log`; resumable): Urbino
-eco2 at 10 min x h30/h60 (D=1/3/7/14/30/60; first, longest jobs), DALTON tvoc (68 devices x h15/30/60), EDIAQI
-providers 1/3/4/6 (16 devices x eco2/tvoc x h15/30/60, D=1/2/3/5/7). 306 jobs.
-Batch 2 ETA (14:47, 29 Oct): ~31 Oct 01:00-06:00; Urbino D=30/60 splits dominate (~297 test days per D).
-Then batch 3: `run_batch.py --batch 3` (added 29 Oct: DALTON eco2 h15/30/60, ridge huber policy, outputs in
-`results/runs_batch3/`). Estimate ~6-7 h with 5 workers (ridge+huber are ~46 % of batch 1's fit time per split).
-When batch 2 is down to the Urbino jobs (cores idle), start batch 3 and the alerts with the free workers (e.g.
-`--workers 2` each) instead of waiting for Urbino to finish. Random forest and GRU stay as reported results, no more tuning time.
+Batch 3: `run_batch.py --batch 3` (DALTON eco2 h15/30/60, ridge huber policy, outputs in `results/runs_batch3/`).
+Estimate ~6-7 h with 5 workers (ridge+huber are ~46 % of batch 1's fit time per split). Give the user the estimate and
+wait for the go before launching. Random forest and GRU stay as reported results, no more tuning time.
 
 **Alerts (code done 2026-10-29, cloud; not run yet):** `scripts/run_alerts.py` (same splits as the learning curve;
 threshold p90/p95 of the D training days; decision offset chosen on a 30 % training tail at FA/day <= budget 0.5/1/2,

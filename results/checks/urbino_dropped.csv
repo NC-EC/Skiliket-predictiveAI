@@ -64,3 +64,15 @@ von_neumann,30,2024-09-02T02:20:00.000000,class,False,27,84,141
 von_neumann,30,2024-09-07T02:20:00.000000,no_class,True,70,84,141
 von_neumann,30,2024-09-08T15:00:00.000000,class,False,65,84,141
 von_neumann,30,2024-09-21T02:20:00.000000,no_class,True,39,84,141
+von_neumann,60,2024-04-15T02:50:00.000000,class,False,60,84,138
+von_neumann,60,2024-04-21T02:50:00.000000,no_class,True,60,84,138
+von_neumann,60,2024-05-10T02:50:00.000000,class,False,55,84,138
+von_neumann,60,2024-05-11T02:50:00.000000,no_class,True,41,84,138
+von_neumann,60,2024-05-28T02:50:00.000000,class,False,45,84,138
+von_neumann,60,2024-06-10T02:50:00.000000,class,False,43,84,138
+von_neumann,60,2024-07-25T02:50:00.000000,no_class,False,35,84,138
+von_neumann,60,2024-07-31T02:50:00.000000,class,False,32,84,138
+von_neumann,60,2024-09-02T02:50:00.000000,class,False,21,84,138
+von_neumann,60,2024-09-07T02:50:00.000000,no_class,True,64,84,138
+von_neumann,60,2024-09-08T15:00:00.000000,no_class,False,65,84,138
+von_neumann,60,2024-09-21T02:50:00.000000,no_class,True,33,84,138

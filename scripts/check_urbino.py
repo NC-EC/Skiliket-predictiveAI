@@ -10,8 +10,14 @@
 The 25th-percentile threshold is taken over the kept (full) test days of each room and horizon and also applied to
 the dropped days.
 
+Control for check 1: the persistence-MAE rule uses rel_mae's own denominator, so it favours the models in "class".
+--calendar-only repeats check 1 with the calendar alone: "weekday" vs "weekend_holiday" (weekend or Italian national
+holiday of 2024), same columns.
+
   python scripts/check_urbino.py --out results/checks/urbino
   -> results/checks/urbino_daytype.csv, urbino_dropped.csv, urbino_policy_threshold.csv
+  python scripts/check_urbino.py --out results/checks/urbino --calendar-only
+  -> results/checks/urbino_daytype_calendar.csv
 """
 from __future__ import annotations
 
@@ -31,17 +37,25 @@ _spec.loader.exec_module(summarize)
 
 MODELS = ["huber", "ridge", "lightgbm", "random_forest", "gru", "policy"]
 DAY = ["device", "horizon_min", "test_start"]
+# Italian national holidays 2024 (Easter Monday 1 Apr); the Urbino rooms were recorded in 2024
+IT_HOLIDAYS = {"01-01", "01-06", "04-01", "04-25", "05-01", "06-02", "08-15", "11-01", "12-08", "12-25", "12-26"}
 
 
-def day_types(df: pd.DataFrame, kept: pd.DataFrame, q: float = 25) -> pd.DataFrame:
-    """One row per test day (device, horizon, test_start): persistence MAE, n_test, weekend flag and day type."""
+def day_types(df: pd.DataFrame, kept: pd.DataFrame, q: float = 25, calendar_only: bool = False) -> pd.DataFrame:
+    """One row per test day (device, horizon, test_start): persistence MAE, n_test, weekend flag and day type.
+    calendar_only: "weekday" / "weekend_holiday" from the date alone (no persistence MAE, which is rel_mae's
+    denominator and so would select days in the models' favour)."""
     pers = df[df["model"] == "persistence"].drop_duplicates(DAY)[DAY + ["mae", "n_test"]]
     pers = pers.rename(columns={"mae": "pers_mae"})
+    mid = pd.to_datetime(pers["test_start"]) + pd.Timedelta(hours=12)
+    pers["weekend"] = mid.dt.day_of_week >= 5
+    if calendar_only:
+        pers["holiday"] = mid.dt.strftime("%m-%d").isin(IT_HOLIDAYS) & (mid.dt.year == 2024)
+        pers["day_type"] = np.where(pers["weekend"] | pers["holiday"], "weekend_holiday", "weekday")
+        return pers
     kept_days = kept[kept["model"] == "persistence"].drop_duplicates(DAY)
     thr = kept_days.groupby(["device", "horizon_min"])["mae"].quantile(q / 100).rename("pers_mae_p25")
     pers = pers.join(thr, on=["device", "horizon_min"])
-    mid = pd.to_datetime(pers["test_start"]) + pd.Timedelta(hours=12)
-    pers["weekend"] = mid.dt.dayofweek >= 5
     pers["day_type"] = np.where(pers["weekend"] | (pers["pers_mae"] < pers["pers_mae_p25"]), "no_class", "class")
     return pers
 
@@ -87,11 +101,20 @@ def main():
     p.add_argument("--csv", nargs="+", default=["results/runs/urbino_*.csv"])
     p.add_argument("--out", default="results/checks/urbino")
     p.add_argument("--min-test-frac", type=float, default=0.5)
+    p.add_argument("--calendar-only", action="store_true",
+                   help="check 1 only, days split by calendar (weekday vs weekend/holiday) -> {out}_daytype_calendar.csv")
     a = p.parse_args()
     paths = sorted({f for pat in a.csv for f in glob.glob(pat)})
     print("files:", [Path(f).name for f in paths])
     df = summarize.recompute_policy(summarize.load(paths))
     kept, short = summarize.drop_short_splits(df, a.min_test_frac)
+    if a.calendar_only:
+        days = day_types(df, kept, calendar_only=True)
+        by_day_type(kept, days).to_csv(f"{a.out}_daytype_calendar.csv", index=False)
+        print("kept test days by type:", days.merge(kept[DAY].drop_duplicates(), on=DAY)
+              .groupby(["horizon_min", "day_type"]).size().to_dict())
+        print("holidays among kept days:", int(days.merge(kept[DAY].drop_duplicates(), on=DAY)["holiday"].sum()))
+        return
     days = day_types(df, kept)
 
     dt = by_day_type(kept, days)

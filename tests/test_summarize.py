@@ -166,3 +166,13 @@ def test_policy_recomputed_only_for_files_with_validation_scores(tmp_path):
     assert len(pol) == 2
     assert pol.loc["old", "policy_choice"] == "lightgbm" and pol.loc["old", "rel_mae"] == 0.7
     assert pol.loc["new", "policy_choice"] == "huber" and pol.loc["new", "rel_mae"] == 0.8
+
+
+def test_policy_threshold_is_a_parameter_with_default_one():
+    """SYNTHETIC rows (code test only): huber validates at 0.97, below 1 but not below 0.95."""
+    b = {"dataset": "s", "device": "d", "target": "eco2", "horizon_min": 15, "train_days": 3, "split": 0, "seed": 0}
+    df = pd.DataFrame([{**b, "model": "persistence", "rel_mae": 1.0},
+                       {**b, "model": "ridge", "rel_mae": 0.9, "cv_rel_mae": 1.02},
+                       {**b, "model": "huber", "rel_mae": 0.8, "cv_rel_mae": 0.97}])
+    choice = lambda **kw: summarize.recompute_policy(df, **kw).query("model == 'policy'")["policy_choice"].item()
+    assert choice() == "huber" and choice(threshold=0.95) == "persistence"

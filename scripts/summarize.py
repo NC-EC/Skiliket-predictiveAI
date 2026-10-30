@@ -62,9 +62,10 @@ def load(paths: list[str]) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
-def recompute_policy(df: pd.DataFrame, candidates=POLICY_CANDIDATES) -> pd.DataFrame:
-    """Replace the policy rows: per split, the candidate (seed 0) with the lowest cv_rel_mae if it is < 1, else
-    persistence. Metrics come from the chosen model's row; time is the sum over the candidates (memory the max)."""
+def recompute_policy(df: pd.DataFrame, candidates=POLICY_CANDIDATES, threshold: float = 1.0) -> pd.DataFrame:
+    """Replace the policy rows: per split, the candidate (seed 0) with the lowest cv_rel_mae if it is < threshold, else
+    persistence. Metrics come from the chosen model's row; time is the sum over the candidates (memory the max).
+    threshold < 1 is a sensitivity check only (scripts/check_urbino.py); the policy itself uses 1."""
     if "cv_rel_mae" not in df:
         return df
     if "source" in df:  # mixed inputs: files written before the cv_rel_mae column keep the runner's policy rows
@@ -72,7 +73,7 @@ def recompute_policy(df: pd.DataFrame, candidates=POLICY_CANDIDATES) -> pd.DataF
         if not scored.any():
             return df
         if not scored.all():
-            return pd.concat([df[~scored], recompute_policy(df[scored], candidates)], ignore_index=True)
+            return pd.concat([df[~scored], recompute_policy(df[scored], candidates, threshold)], ignore_index=True)
     split_keys = ["dataset", "device", "target", "horizon_min", "train_days", "split"]
     base = df[df["model"] != "policy"]
     cand = base[base["model"].isin(candidates) & (base["seed"] == 0)]
@@ -81,7 +82,7 @@ def recompute_policy(df: pd.DataFrame, candidates=POLICY_CANDIDATES) -> pd.DataF
     for key, g in cand.groupby(split_keys, sort=False):
         scored = g[np.isfinite(g["cv_rel_mae"])]
         best = scored.loc[scored["cv_rel_mae"].idxmin()] if len(scored) else None
-        win = best is not None and best["cv_rel_mae"] < 1
+        win = best is not None and best["cv_rel_mae"] < threshold
         row = best if win else pers.get(key)
         if row is None:
             continue

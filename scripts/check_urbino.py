@@ -70,7 +70,8 @@ def _scores(g: pd.DataFrame) -> dict:
 
 
 def by_day_type(kept: pd.DataFrame, days: pd.DataFrame) -> pd.DataFrame:
-    d = kept[kept["model"].isin(MODELS)].merge(days[DAY + ["pers_mae", "day_type"]], on=DAY)
+    keep = kept["model"].isin(MODELS) | kept["model"].str.startswith("chronos_")  # zero-shot rows (run_zeroshot.py)
+    d = kept[keep].merge(days[DAY + ["pers_mae", "day_type"]], on=DAY)
     rows = []
     for rooms, sub in [("all", d)] + [(r, g) for r, g in d.groupby("device")]:
         for key, g in sub.groupby(["horizon_min", "model", "train_days", "day_type"]):

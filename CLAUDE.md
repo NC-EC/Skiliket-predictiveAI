@@ -209,8 +209,10 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   loading the data). Ridge/huber: ~0.09 ms, a few kB.
 
 ## CURRENT TASK
-**Done: batches 1-4, alerts h30/h60, paper figures and tables.**
-**Now: Chronos zero-shot (D = 0 point; code 2026-10-31, cloud, tested with a fake pipeline only).** `coldstart/zeroshot.py`
+**Done: batches 1-4, alerts h30/h60, paper figures and tables, Chronos-Bolt tiny/small on DALTON eco2 (results in
+the paper as Section 5.9 / Table 6, 2026-10-31).** Nothing running. Optional next: step 4 below, or a policy that
+switches from Chronos to the local model (needs Chronos scored on the policy's validation folds).
+**Chronos zero-shot (D = 0 point; code 2026-10-31, cloud, tested with a fake pipeline only).** `coldstart/zeroshot.py`
 + `scripts/run_zeroshot.py`: no training; at each test origin the model gets the last 2 h / 24 h of eco2 inside the
 segment (cut at gaps, never filled) and forecasts up to 60 min. Test days = the learning curve's common test days of
 the largest feasible D, so rows compare with batches 1/3 per device and horizon; persistence rows included, train_days=0.
@@ -242,4 +244,4 @@ device's own clock (fine for per-device models, not comparable across sites); ca
 learning curve upward from D = 3 on the 4 smoke devices.
 
 ## Open decisions (ask the user, don't assume)
-Sensor model / time zone / device ID of SKILIKET kits; zero-shot pretrained model (Chronos vs TimesFM, check license and size); false-alarm budget; publication venue.
+Sensor model / time zone / device ID of SKILIKET kits; whether to run Chronos-2 with covariates; false-alarm budget; publication venue.

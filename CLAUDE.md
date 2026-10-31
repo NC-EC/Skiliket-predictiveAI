@@ -208,6 +208,18 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
 - Cost: tiny 8.7 M params, 0.70 ms per window (24 h), process peak RSS 581 MB; small 47.7 M, 3.1 ms, 820 MB (RSS includes
   loading the data). Ridge/huber: ~0.09 ms, a few kB.
 
+## Done 2026-10-31 (zero-shot step 4: Urbino, Chronos-2)
+- Urbino, Bolt tiny, context 24 h (`results/summary_zeroshot_urbino_eco2_bolt_tiny_*`): geo rel_mae olivetti 0.965/0.993,
+  von_neumann 0.979/1.009, turing 1.016/1.044 (h30/h60); only olivetti h30 meets. Better than huber/policy of batch 2 at
+  every D (huber at D=14: 0.99-1.13). `check_urbino.py --calendar-only` reads the CSV but writes an empty file: its fixed
+  MODELS list has no chronos model (not adapted, per the user).
+- Chronos-2 (120 M params), context 24 h, DALTON eco2, 57 devices; covariates as dicts work with the real model.
+  `results/summary_zeroshot_dalton_eco2_{chronos2,chronos2_cov}_*`. Share meeting h15/30/60: chronos2 63/65/58 %,
+  chronos2_cov 61/73/64 % (Bolt tiny 39/42/42 %); median geo 0.93-0.95. On the 34 devices tested at D=14: 65-71 %
+  meet vs huber 56/47/45 % and policy 50/47/52 %; Chronos-2 beats huber on 44-53 % of those devices, policy on 55-62 %.
+  At D=1 it beats huber on 96-100 % and the policy on 85-95 %. Cost: 15 ms per window (60 ms with covariates), process
+  peak RSS 1.22 GB, ~25 min for all DALTON (~2.5 h with covariates) on CPU.
+
 ## CURRENT TASK
 **Done: batches 1-4, alerts h30/h60, paper figures and tables, Chronos-Bolt tiny/small on DALTON eco2 (results in
 the paper as Section 5.9 / Table 6, 2026-10-31).** Nothing running. Optional next: step 4 below, or a policy that

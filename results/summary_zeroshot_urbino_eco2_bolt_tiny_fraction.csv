@@ -1,0 +1,5 @@
+dataset,target,horizon_min,model,train_days,n_devices,n_meeting,frac_meeting
+urbino,eco2,30,chronos_bolt_tiny_ctx24h,0,3,1,0.3333333333333333
+urbino,eco2,30,persistence,0,3,0,0.0
+urbino,eco2,60,chronos_bolt_tiny_ctx24h,0,3,0,0.0
+urbino,eco2,60,persistence,0,3,0,0.0

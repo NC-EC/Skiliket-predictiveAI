@@ -176,6 +176,16 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   cells). New policy (ridge+huber, recomputed from cv_rel_mae) meets at D=14 on 50/47/52 % of devices (h15/30/60) vs the
   old policy 38/26/39 % and huber 56/47/45 %; median geo rel_mae <= 1.01 at every D (old policy up to 1.07).
 
+## Done 2026-10-31 (batch 4, weekly pattern)
+- Batch 4 (`--weekly`: day of week + last week's change, only once the kit has a week; ridge/huber/policy +
+  weekly_naive) killed once for low memory (Chrome ~7 GB), relaunched 00:19 -> 09:00 (8.7 h), 167 DALTON + 6 Urbino CSVs,
+  37 expected failures. `results/summary_batch4_{dalton,urbino}_*`, `results/checks/urbino_weekly_daytype_calendar.csv`,
+  `scripts/compare_weekly.py` -> `results/checks/weekly_comparison_{dalton,urbino,urbino_daytype}.csv`.
+- **The weekly inputs do not help**: DALTON huber at D=14 meets on 47/44/42 % (h15/30/60) vs 56/47/45 % without; median
+  geo rel_mae worse at every D (largest at D=7: 1.04 vs 0.99 at h30). Urbino weekdays huber 0.963 vs 0.930 at D=14 h30
+  (no longer meets), weekends worse too. weekly_naive (last week's change) = persistence until D=7, then geo 1.39-1.53
+  (DALTON) / 1.37-1.67 (Urbino): last week's pattern is a poor forecast at 30-60 min.
+
 ## CURRENT TASK
 All planned batches done. In progress (30 Oct evening): paper figures/tables (`scripts/figures.py`, results/figures/),
 then **batch 4** = weekly-pattern experiment (code done in the cloud, 30 Oct): `run_learning_curve.py --weekly` adds

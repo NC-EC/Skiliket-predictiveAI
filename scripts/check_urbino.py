@@ -35,7 +35,7 @@ _spec = importlib.util.spec_from_file_location("summarize", Path(__file__).paren
 summarize = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(summarize)
 
-MODELS = ["huber", "ridge", "lightgbm", "random_forest", "gru", "policy"]
+MODELS = ["huber", "ridge", "lightgbm", "random_forest", "gru", "policy", "weekly_naive"]
 DAY = ["device", "horizon_min", "test_start"]
 # Italian national holidays 2024 (Easter Monday 1 Apr); the Urbino rooms were recorded in 2024
 IT_HOLIDAYS = {"01-01", "01-06", "04-01", "04-25", "05-01", "06-02", "08-15", "11-01", "12-08", "12-25", "12-26"}

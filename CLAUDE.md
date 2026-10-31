@@ -197,6 +197,17 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
 - **Paper figures/tables done** (`scripts/figures.py --paper`, results/figures/): fig_learning_curve, fig_urbino_daytype,
   fig_alerts_tradeoff (h30 and h60 panels, same axes), tables_paper.md (Table 2 stable D*, Table 3 edge cost).
 
+## Done 2026-10-31 (Chronos zero-shot, DALTON eco2)
+- `.[zeroshot]` installed (chronos-forecasting 2.3.2, torch unchanged 2.14.1+cpu). Bolt tiny and Bolt small, context 2 h
+  and 24 h, 57 of 68 devices (the 11 short ones give no rows), ~2-5 min per model on CPU. Summaries:
+  `results/summary_zeroshot_dalton_eco2_{bolt_tiny,bolt_small}_*` (raw CSVs local).
+- Context 24 h is what works: share meeting h15/30/60 tiny 39/42/42 %, small 37/44/49 %; median geo rel_mae 0.96-0.99.
+  Context 2 h: 11-25 %, median 1.04-1.14. At D = 1 (same test days) Chronos 24 h beats huber on 95-100 % of devices and
+  the policy on 73-86 %; huber/policy meet on 0-5 % at D = 1 and 10-24 % at D = 3. At D = 14 (34 devices) huber/policy
+  are as good or better (Chronos 24 h on that subset meets on 29/38-41/42-52 %; it beats huber on 18-42 % of devices).
+- Cost: tiny 8.7 M params, 0.70 ms per window (24 h), process peak RSS 581 MB; small 47.7 M, 3.1 ms, 820 MB (RSS includes
+  loading the data). Ridge/huber: ~0.09 ms, a few kB.
+
 ## CURRENT TASK
 **Done: batches 1-4, alerts h30/h60, paper figures and tables.**
 **Now: Chronos zero-shot (D = 0 point; code 2026-10-31, cloud, tested with a fake pipeline only).** `coldstart/zeroshot.py`

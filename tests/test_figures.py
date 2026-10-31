@@ -40,7 +40,9 @@ def test_paper_figures_draw_each_series(tmp_path):
     ov = pd.DataFrame([{"train_days": 14, "mode": "tuned", "alert_q": 90, "model": m, "budget": b,
                         "median_fa_per_day": b * 0.8, "median_recall": 0.3 + b / 10}
                        for m in figures.ALERT_MODELS for b in (0.5, 1, 2)])
-    fig = figures.alerts_tradeoff_figure(ov)
-    assert len(fig.get_axes()[0].get_lines()) == len(figures.ALERT_MODELS)
+    fig = figures.alerts_tradeoff_figure({30: ov, 60: ov})
+    axes = fig.get_axes()
+    assert len(axes) == 2 and all(len(a.get_lines()) == len(figures.ALERT_MODELS) for a in axes)
+    assert axes[0].get_xlim() == axes[1].get_xlim() and axes[0].get_ylim() == axes[1].get_ylim()
     fig.savefig(tmp_path / "a.svg")
     assert (tmp_path / "a.svg").stat().st_size > 0

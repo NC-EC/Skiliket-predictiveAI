@@ -184,20 +184,24 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
 - **The weekly inputs do not help**: DALTON huber at D=14 meets on 47/44/42 % (h15/30/60) vs 56/47/45 % without; median
   geo rel_mae worse at every D (largest at D=7: 1.04 vs 0.99 at h30). Urbino weekdays huber 0.963 vs 0.930 at D=14 h30
   (no longer meets), weekends worse too. weekly_naive (last week's change) = persistence until D=7, then geo 1.39-1.53
-  (DALTON) / 1.37-1.67 (Urbino): last week's pattern is a poor forecast at 30-60 min.
+  (DALTON) / 1.37-1.67 (Urbino): last week's pattern is a poor forecast at 30-60 min. Batch 4 weekly inputs:
+  `coldstart/weekly.py` (day-of-week one-hot + y(t+h-7d) - y(t-7d), only if t-7d >= the kit's start). weekly_naive
+  differs slightly from persistence at Urbino D=3 (1.003): expected, data gaps put some test days > 7 days after the
+  kit's start.
+- **Alerts at 60 min done** (DALTON eco2 h60, D=3/7/14, same settings as h30): 51 of 68 devices,
+  `results/summary_alerts_dalton_eco2_h60_{overall,devices}.csv`. At q90, budget 1, D=14: persistence recall 0.49 vs
+  models 0.31-0.44 (gap wider than at h30); FA/day persistence 0.65, huber 0.59, LightGBM 0.56, ridge 0.77, policy 0.85;
+  lead time models 28-31 min vs persistence 25. LightGBM is the best model at h60 (recall 0.39, alarm_frac 0.08, 76 %
+  within budget). Overall: no model beats persistence at detecting events at h30 or h60; models add a little fewer false
+  alarms (huber/LightGBM) and a few minutes of lead time.
+- **Paper figures/tables done** (`scripts/figures.py --paper`, results/figures/): fig_learning_curve, fig_urbino_daytype,
+  fig_alerts_tradeoff (h30 and h60 panels, same axes), tables_paper.md (Table 2 stable D*, Table 3 edge cost).
 
 ## CURRENT TASK
-All planned batches done. In progress (30 Oct evening): paper figures/tables (`scripts/figures.py`, results/figures/),
-then **batch 4** = weekly-pattern experiment (code done in the cloud, 30 Oct): `run_learning_curve.py --weekly` adds
-`coldstart/weekly.py` inputs (day-of-week one-hot + y(t+h-7d) - y(t-7d), available only if t-7d >= the kit's start, i.e.
-never for D < 7; 0 + availability flag otherwise) and the `weekly_naive` baseline (persistence + last week's change).
-`run_batch.py --batch 4` = Urbino eco2 (10 min, h30/h60, D=1..60) + DALTON eco2 (h15/30/60), ridge/huber/policy,
-results/runs_batch4/; compare with batch 2 (Urbino) and batch 3 (DALTON) cell by cell. Estimate ~7-9 h with 5 workers.
-Urbino weekday/weekend split: `check_urbino.py --calendar-only --csv "results/runs_batch4/urbino_*.csv"`.
-EDIAQI cannot get more D (the record spans ~3 weeks).
-Random forest and GRU stay as reported results, no more tuning time.
+**Done: batches 1-4, alerts h30/h60, paper figures and tables.** Nothing running. Next steps are up to the user.
+EDIAQI cannot get more D (the record spans ~3 weeks). Random forest and GRU stay as reported results, no more tuning.
 
-**Alerts (code done 2026-10-29, cloud; not run yet):** `scripts/run_alerts.py` (same splits as the learning curve;
+**Alerts (code, 2026-10-29, cloud; runs done 30-31 Oct):** `scripts/run_alerts.py` (same splits as the learning curve;
 threshold p90/p95 of the D training days; decision offset chosen on a 30 % training tail at FA/day <= budget 0.5/1/2,
 then the model is refit on all D days and tested with that offset; also `raw` = offset 0; `alarm_frac` because merged
 alarms make an all-day alarm count as one false alarm; `--events` flags test events with a DALTON annotation within
@@ -207,8 +211,6 @@ Clock check done (`results/checks/annotation_clock.csv`, 38 devices with annotat
 0.44 at 0, peak 0.46 at -30 min, no peak near +-330 min), so `--ann-shift-min 0`. But the link is weak: chance level
 (shifts >= 4 h) is 0.32, so only +0.10 above chance; 26/38 devices above their own chance level. Annotations are dense
 (median 218 per device), so they are a descriptive check of alerts, not ground truth for events.
-Plan: alerts after batch 2: DALTON eco2 h30, D=3/7/14, persistence/ridge/
-huber/lightgbm/policy, `--events --ann-shift-min <peak if clearly != 0>`.
 
 Notes for the paper (do not act on them now): DALTON's clock time zone is unknown, so hour-of-day features are in each
 device's own clock (fine for per-device models, not comparable across sites); calendar features are what turns the

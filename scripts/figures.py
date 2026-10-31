@@ -11,7 +11,8 @@ at that D; one line per model, one panel per forecast horizon.
   fig_learning_curve   DALTON share of devices meeting the criterion vs D, eCO2 (solid; huber/ridge/lightgbm from
                        batch 1, the corrected policy from batch 3) and TVOC (dotted; batch 2), one panel per horizon;
   fig_urbino_daytype   Urbino huber geometric rel_mae with 95 % CI vs D, weekday vs weekend/holiday (calendar split);
-  fig_alerts_tradeoff  DALTON eCO2 h30 alerts at D=14: median recall vs median false alarms/day, budgets 0.5/1/2
+  fig_alerts_tradeoff  DALTON eCO2 alerts at D=14, h30 and h60 panels (same axes): median recall vs median false
+                       alarms/day, budgets 0.5/1/2
                        (q90 threshold, tuned offset);
   tables_paper.md      Table 2 (stable D*, policy rows from batch 3) and the edge cost table (results/edge/, D=7).
 No titles inside the figures (they go in the caption). PNG at 300 dpi and SVG.
@@ -179,29 +180,36 @@ def urbino_daytype_figure(dt: pd.DataFrame, model: str = "huber"):
 ALERT_MODELS = ["persistence", "ridge", "huber", "lightgbm", "policy"]
 
 
-def alerts_tradeoff_figure(ov: pd.DataFrame, D: float = 14, q: float = 90):
-    """ov: summarize_alerts.py *_overall.csv. One point per model and false-alarm budget (tuned offset)."""
-    ov = ov[(ov["train_days"] == D) & (ov["mode"] == "tuned") & (ov["alert_q"] == q)]
-    fig, ax = plt.subplots(figsize=(4.6, 3.6))
-    for model in ALERT_MODELS:
-        color, marker = PERSISTENCE if model == "persistence" else STYLE[model]
-        g = ov[ov["model"] == model].sort_values("budget")
-        ax.plot(g["median_fa_per_day"], g["median_recall"], color=color, marker=marker, lw=1.4, ms=6.5,
-                mec="white", mew=0.8, ls="--" if model == "persistence" else "-",
-                label="Persistence" if model == "persistence" else LABEL[model], zorder=3)
-        if model == "persistence":  # budgets named once, on the baseline
-            for _, r in g.iterrows():
-                ax.annotate(f"budget {r['budget']:g}", (r["median_fa_per_day"], r["median_recall"]), xytext=(-7, 5),
-                            textcoords="offset points", ha="right", fontsize=9, color=MUTED)
-    ax.set_xlabel("False alarms per day (median)")
-    ax.set_ylabel("Recall (median)")
-    ax.set_xlim(left=0)
-    lo, hi = ov["median_recall"].min(), ov["median_recall"].max()
-    ax.set_ylim(lo - 0.08 * (hi - lo), hi + 0.08 * (hi - lo))
-    _clean(ax)
-    ax.grid(axis="x", color=GRID, lw=0.6)
-    ax.legend(frameon=False, loc="lower right")
-    fig.tight_layout()
+def alerts_tradeoff_figure(by_horizon: dict[int, pd.DataFrame], D: float = 14, q: float = 90):
+    """by_horizon: {horizon_min: summarize_alerts.py *_overall.csv}. One panel per horizon, same axes; one point per
+    model and false-alarm budget (tuned offset)."""
+    sel = {h: ov[(ov["train_days"] == D) & (ov["mode"] == "tuned") & (ov["alert_q"] == q)]
+           for h, ov in sorted(by_horizon.items())}
+    allv = pd.concat(sel.values())
+    fig, axes = plt.subplots(1, len(sel), figsize=(3.9 * len(sel), 3.6), sharex=True, sharey=True, squeeze=False)
+    for ax, (h, ov) in zip(axes[0], sel.items()):
+        for model in ALERT_MODELS:
+            color, marker = PERSISTENCE if model == "persistence" else STYLE[model]
+            g = ov[ov["model"] == model].sort_values("budget")
+            ax.plot(g["median_fa_per_day"], g["median_recall"], color=color, marker=marker, lw=1.4, ms=6.5,
+                    mec="white", mew=0.8, ls="--" if model == "persistence" else "-",
+                    label="Persistence" if model == "persistence" else LABEL[model], zorder=3)
+            if model == "persistence":  # budgets named once per panel, on the baseline
+                for _, r in g.iterrows():
+                    ax.annotate(f"budget {r['budget']:g}", (r["median_fa_per_day"], r["median_recall"]),
+                                xytext=(-7, 5), textcoords="offset points", ha="right", fontsize=9, color=MUTED)
+        ax.set_xlabel("False alarms per day (median)")
+        _clean(ax)
+        ax.grid(axis="x", color=GRID, lw=0.6)
+        _panel_label(ax, f"{h:g}-min horizon")
+    axes[0][0].set_ylabel("Recall (median)")
+    axes[0][0].set_xlim(0, 1.05 * allv["median_fa_per_day"].max())
+    lo, hi = allv["median_recall"].min(), allv["median_recall"].max()
+    axes[0][0].set_ylim(lo - 0.08 * (hi - lo), hi + 0.08 * (hi - lo))
+    handles, labels = axes[0][0].get_legend_handles_labels()
+    fig.tight_layout(rect=(0, 0, 1, 0.9))
+    fig.legend(handles, labels, loc="upper center", ncol=len(labels), frameon=False, bbox_to_anchor=(0.5, 1.0),
+               columnspacing=1.0)
     return fig
 
 
@@ -274,7 +282,7 @@ def build_paper(root: Path, out_dir: Path) -> list[Path]:
     figs = {"fig_learning_curve": lambda: learning_curve_figure(eco2, tvoc),
             "fig_urbino_daytype": lambda: urbino_daytype_figure(pd.read_csv(root / "checks/urbino_daytype_calendar.csv")),
             "fig_alerts_tradeoff": lambda: alerts_tradeoff_figure(
-                pd.read_csv(root / "summary_alerts_dalton_eco2_h30_overall.csv"))}
+                {h: pd.read_csv(root / f"summary_alerts_dalton_eco2_h{h}_overall.csv") for h in (30, 60)})}
     written = []
     with plt.rc_context(PAPER_RC):
         for name, make in figs.items():

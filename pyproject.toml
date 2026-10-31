@@ -9,6 +9,7 @@ dependencies = ["pandas", "numpy", "scikit-learn", "pyyaml", "openpyxl"]
 dev = ["pytest"]
 models = ["lightgbm", "torch", "scipy"]
 figures = ["matplotlib"]
+zeroshot = ["chronos-forecasting>=2.0", "torch"]
 
 [build-system]
 requires = ["setuptools>=68"]

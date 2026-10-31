@@ -198,7 +198,21 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   fig_alerts_tradeoff (h30 and h60 panels, same axes), tables_paper.md (Table 2 stable D*, Table 3 edge cost).
 
 ## CURRENT TASK
-**Done: batches 1-4, alerts h30/h60, paper figures and tables.** Nothing running. Next steps are up to the user.
+**Done: batches 1-4, alerts h30/h60, paper figures and tables.**
+**Now: Chronos zero-shot (D = 0 point; code 2026-10-31, cloud, tested with a fake pipeline only).** `coldstart/zeroshot.py`
++ `scripts/run_zeroshot.py`: no training; at each test origin the model gets the last 2 h / 24 h of eco2 inside the
+segment (cut at gaps, never filled) and forecasts up to 60 min. Test days = the learning curve's common test days of
+the largest feasible D, so rows compare with batches 1/3 per device and horizon; persistence rows included, train_days=0.
+Steps (one job at a time, memory):
+1. `uv pip install --python .venv\Scripts\python.exe -e ".[zeroshot]"` (Apache-2.0 code and weights, from Hugging Face).
+2. Bolt tiny (9 M params), then Bolt small (48 M), DALTON eco2, all devices:
+   `.venv\Scripts\python.exe scripts\run_zeroshot.py --dataset dalton --path data/raw/dalton --devices all --target eco2 --model amazon/chronos-bolt-tiny --alias bolt_tiny --context-hours 2 24 --out results/zeroshot/dalton_eco2_bolt_tiny.csv`
+   (same with `amazon/chronos-bolt-small --alias bolt_small`). Resumable per device (`<out>_parts/`).
+3. `scripts/summarize.py` on each CSV -> `results/summary_zeroshot_dalton_eco2_<alias>_*`; commit the summaries
+   (not the raw CSVs). Report per horizon: share of devices meeting the criterion and median geo rel_mae per context,
+   next to huber/policy at D=1/3/14 from batch 3; median infer_ms, n_params, max_rss_mb.
+4. Optional: Urbino (`--cadence 10 --horizons 30 60 --days 1 3 7 14 30 60`) and `amazon/chronos-2` (120 M; try
+   `--covariates`) only if 2-3 are fine.
 EDIAQI cannot get more D (the record spans ~3 weeks). Random forest and GRU stay as reported results, no more tuning.
 
 **Alerts (code, 2026-10-29, cloud; runs done 30-31 Oct):** `scripts/run_alerts.py` (same splits as the learning curve;

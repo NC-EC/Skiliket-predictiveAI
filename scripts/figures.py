@@ -9,7 +9,8 @@ at that D; one line per model, one panel per forecast horizon.
 
 --paper builds the final figures and tables from the committed summaries only (no model is run):
   fig_learning_curve   DALTON share of devices meeting the criterion vs D, eCO2 (solid; huber/ridge/lightgbm from
-                       batch 1, the corrected policy from batch 3) and TVOC (dotted; batch 2), one panel per horizon;
+                       batch 1, the corrected policy from batch 3) and TVOC (dotted; batch 2), one panel per horizon, with Chronos-2 and Chronos-Bolt
+                       tiny (24-h context, no training, eCO2) as horizontal lines;
   fig_urbino_daytype   Urbino huber geometric rel_mae with 95 % CI vs D, weekday vs weekend/holiday (calendar split);
   fig_alerts_tradeoff  DALTON eCO2 alerts at D=14, h30 and h60 panels (same axes): median recall vs median false
                        alarms/day, budgets 0.5/1/2
@@ -106,8 +107,15 @@ def _panel_label(ax, text):
 LC_MODELS = ["huber", "ridge", "lightgbm", "policy"]
 
 
-def learning_curve_figure(eco2: pd.DataFrame, tvoc: pd.DataFrame):
-    """eco2 / tvoc: *_fraction.csv rows (one dataset) with the models to draw. Solid eCO2, dotted TVOC."""
+# Pretrained models used without training (zero-shot): horizontal reference lines, since they need no training days.
+# Neutral inks, so they do not take a categorical slot from the trained models.
+ZEROSHOT_STYLE = {"chronos_chronos2_ctx24h": ("Chronos-2, no training", INK, (0, (5, 2))),
+                  "chronos_bolt_tiny_ctx24h": ("Chronos-Bolt tiny, no training", "#8a8984", (0, (2, 2)))}
+
+
+def learning_curve_figure(eco2: pd.DataFrame, tvoc: pd.DataFrame, zeroshot: pd.DataFrame | None = None):
+    """eco2 / tvoc: *_fraction.csv rows (one dataset) with the models to draw. Solid eCO2, dotted TVOC.
+    zeroshot: optional eCO2 *_fraction.csv rows of pretrained models (train_days = 0), drawn as horizontal lines."""
     from matplotlib.lines import Line2D
 
     horizons = sorted(eco2["horizon_min"].unique())
@@ -121,6 +129,11 @@ def learning_curve_figure(eco2: pd.DataFrame, tvoc: pd.DataFrame):
                 m = sub[sub["model"] == model].sort_values("train_days")
                 ax.plot(m["train_days"], 100 * m["frac_meeting"], color=color, marker=marker, ls=ls, lw=1.6, ms=ms,
                         mec="white", mew=0.7, zorder=3 if ls == "-" else 2)
+        if zeroshot is not None:
+            for model, (_, color, ls) in ZEROSHOT_STYLE.items():
+                z = zeroshot[(zeroshot["horizon_min"] == h) & (zeroshot["model"] == model)]
+                if len(z):
+                    ax.axhline(100 * z["frac_meeting"].iloc[0], color=color, ls=ls, lw=1.3, zorder=1)
         n_e = eco2[eco2["horizon_min"] == h].groupby("train_days")["n_devices"].max()
         n_t = tvoc[tvoc["horizon_min"] == h].groupby("train_days")["n_devices"].max()
         ax.set_xscale("log")
@@ -128,7 +141,7 @@ def learning_curve_figure(eco2: pd.DataFrame, tvoc: pd.DataFrame):
         ax.set_xticklabels([f"{d:g}\n{n_e.get(d, 0)}" if n_e.get(d) == n_t.get(d)
                             else f"{d:g}\n{n_e.get(d, 0)}/{n_t.get(d, 0)}" for d in days])
         ax.minorticks_off()
-        ax.set_ylim(0, 60)
+        ax.set_ylim(0, 80 if zeroshot is not None else 60)
         _clean(ax)
         _panel_label(ax, f"{h:g}-min horizon")
     axes[0][0].set_ylabel("Devices meeting criterion (%)")
@@ -137,9 +150,14 @@ def learning_curve_figure(eco2: pd.DataFrame, tvoc: pd.DataFrame):
                for m in LC_MODELS]
     handles += [Line2D([], [], color=MUTED, ls="-", lw=1.6, label="eCO$_2$"),
                 Line2D([], [], color=MUTED, ls=":", lw=1.6, label="TVOC")]
-    fig.tight_layout(rect=(0, 0, 1, 0.88))
-    fig.legend(handles=handles, loc="upper center", ncol=6, frameon=False, bbox_to_anchor=(0.5, 1.0),
-               handlelength=2.0, columnspacing=1.0)
+    if zeroshot is not None:
+        present = set(zeroshot["model"])
+        handles += [Line2D([], [], color=c, ls=ls, lw=1.3, label=f"{lab} (eCO$_2$)")
+                    for m, (lab, c, ls) in ZEROSHOT_STYLE.items() if m in present]
+    two_rows = len(handles) > 6
+    fig.tight_layout(rect=(0, 0, 1, 0.80 if two_rows else 0.88))
+    fig.legend(handles=handles, loc="upper center", ncol=4 if two_rows else 6, frameon=False,
+               bbox_to_anchor=(0.5, 1.0), handlelength=2.0, columnspacing=1.0)
     return fig
 
 
@@ -279,7 +297,9 @@ def build_paper(root: Path, out_dir: Path) -> list[Path]:
     b3 = pd.read_csv(root / "summary_batch3_dalton_fraction.csv")
     eco2 = pd.concat([b1[b1["model"].isin(["huber", "ridge", "lightgbm"])], b3[b3["model"] == "policy"]])
     tvoc = pd.read_csv(root / "summary_batch2_dalton_tvoc_fraction.csv")
-    figs = {"fig_learning_curve": lambda: learning_curve_figure(eco2, tvoc),
+    zs = [root / f"summary_zeroshot_dalton_eco2_{a}_fraction.csv" for a in ("chronos2", "bolt_tiny")]
+    zeroshot = pd.concat([pd.read_csv(f) for f in zs if f.exists()]) if any(f.exists() for f in zs) else None
+    figs = {"fig_learning_curve": lambda: learning_curve_figure(eco2, tvoc, zeroshot),
             "fig_urbino_daytype": lambda: urbino_daytype_figure(pd.read_csv(root / "checks/urbino_daytype_calendar.csv")),
             "fig_alerts_tradeoff": lambda: alerts_tradeoff_figure(
                 {h: pd.read_csv(root / f"summary_alerts_dalton_eco2_h{h}_overall.csv") for h in (30, 60)})}

@@ -31,6 +31,10 @@ def test_paper_figures_draw_each_series(tmp_path):
     fig = figures.learning_curve_figure(frac, frac)
     assert len(fig.get_axes()) == 3 and all(len(a.get_lines()) == 8 for a in fig.get_axes())  # 4 models x 2 targets
     assert {ln.get_linestyle() for ln in fig.get_axes()[0].get_lines()} == {"-", ":"}
+    zs = pd.DataFrame([{"horizon_min": h, "model": m, "train_days": 0, "n_devices": 10, "frac_meeting": 0.6}
+                       for h in (15, 30, 60) for m in figures.ZEROSHOT_STYLE])
+    fig = figures.learning_curve_figure(frac, frac, zs)
+    assert all(len(a.get_lines()) == 10 for a in fig.get_axes())  # + 2 zero-shot reference lines
 
     dt = pd.DataFrame([{"device": "all", "model": "huber", "horizon_min": h, "train_days": d, "day_type": k,
                         "geo_rel_mae": 1.2, "geo_ci_lo": 1.1, "geo_ci_hi": 1.3}

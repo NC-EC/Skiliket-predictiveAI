@@ -26,6 +26,7 @@ from coldstart.alerts import evaluate_alerts, percentile_threshold
 from coldstart.cost import measure_fit, measure_inference
 from coldstart.cost import Cost
 from coldstart.models import REGISTRY, PolicyDelta
+from coldstart import weekly as wk
 
 
 def main():
@@ -47,6 +48,10 @@ def main():
                         "--no-common-test for quick smoke checks")
     p.add_argument("--calendar", action=argparse.BooleanOptionalAction, default=True,
                    help="add hour-of-day sin/cos and a weekend flag (from the origin time) to the learned models' inputs")
+    p.add_argument("--weekly", action=argparse.BooleanOptionalAction, default=False,
+                   help="add day of week and the target's change over the same interval one week earlier (only where "
+                        "the kit was already running then, so not before D = 7) to the learned models' inputs, and the "
+                        "weekly_naive baseline")
     p.add_argument("--cache", action=argparse.BooleanOptionalAction, default=True,
                    help="reuse the gridded series from data/cache/ instead of re-reading the raw files")
     p.add_argument("--parallel", type=int, default=1,
@@ -63,7 +68,8 @@ def main():
     gap = a.lags + a.horizon // a.cadence
     # learned models get calendar columns appended; baselines keep reading the lag block of w.X
     X = np.hstack([w.X, ev.calendar_features(w.t0)]) if a.calendar else w.X
-    n_static = len(ev.CALENDAR) if a.calendar else 0
+    n_static = (len(ev.CALENDAR) if a.calendar else 0) + (len(wk.WEEKLY) if a.weekly else 0)
+    wk_change = wk.last_week_change(grid, a.target, w.t0, w.t_target) if a.weekly else None
     print(f"{name}: grid={len(grid)} windows={len(w.y)} channels={chs} calendar={a.calendar}")
     # train lengths this device can hold (D days of training plus one test period); with --common-test the largest
     # of these sets the first origin, so a short device keeps its feasible lengths instead of losing every split
@@ -82,11 +88,19 @@ def main():
             t_end = w.t_target[tr].max()
             tr = tr[w.t0[tr] >= t_end - np.timedelta64(int(D * 86400), "s")]
             thr = percentile_threshold(w.y[tr], a.alert_q)
+            # weekly inputs depend on when this kit started (the first of its D days): last week's value is unknown
+            # to a kit that was not running then
+            Xs, wcols = X, None
+            if a.weekly:
+                wcols = wk.weekly_columns(wk_change, w.t0, t_end - np.timedelta64(int(D * 86400), "s"))
+                Xs = np.hstack([X, wcols])
             base = {"dataset": a.dataset, "device": a.device or "", "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
-                    "calendar": a.calendar, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
+                    "calendar": a.calendar, "weekly": a.weekly, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
                     "test_start": str(w.t0[te].min()), "host": platform.machine(), "parallel": a.parallel}
             # baselines (seed-independent)
             preds = {"persistence": ev.persistence(w, te), "moving_average": ev.moving_average(w, te, len(chs))}
+            if a.weekly:
+                preds["weekly_naive"] = wk.weekly_naive(w.y0[te], wcols[te])
             for name, yp in preds.items():
                 rows.append({**base, "model": name, "seed": 0, **_metrics(w, tr, te, yp, thr, a)})
             fitted = {}  # (model, seed) -> (model, cost); the policy reuses seed 0 of its candidates
@@ -97,13 +111,13 @@ def main():
                     if mname == "policy":
                         for c in PolicyDelta.CANDIDATES:  # candidates not in --models are fit (without rows)
                             if (c, 0) not in fitted:
-                                fitted[c, 0] = measure_fit(lambda: REGISTRY[c](seed=0, gap=gap).fit(X[tr], w.y[tr], w.y0[tr]))
+                                fitted[c, 0] = measure_fit(lambda: REGISTRY[c](seed=0, gap=gap).fit(Xs[tr], w.y[tr], w.y0[tr]))
                         model, cost = _policy(fitted)
                     else:
-                        model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(X[tr], w.y[tr], w.y0[tr]))
+                        model, cost = measure_fit(lambda: REGISTRY[mname](seed=seed, **kw).fit(Xs[tr], w.y[tr], w.y0[tr]))
                         fitted[mname, seed] = model, cost
-                    yp = model.predict(X[te], w.y0[te])
-                    infer = _infer_ms(model, X[te], w.y0[te])
+                    yp = model.predict(Xs[te], w.y0[te])
+                    infer = _infer_ms(model, Xs[te], w.y0[te])
                     rows.append({**base, "model": mname, "seed": seed, **_metrics(w, tr, te, yp, thr, a),
                                  **cost.asdict(), "infer_ms": infer, "policy_choice": getattr(model, "choice_", ""),
                                  # the model's own validation score; summarize can recompute the policy from it

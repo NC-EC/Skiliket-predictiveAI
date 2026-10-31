@@ -46,3 +46,12 @@ def test_batch3_runs_linear_models_and_policy_in_its_own_folder(tmp_path, monkey
     batch.run(("dalton", "p", "H1_41", "eco2", 5, ["1", "3"], 15), 5, tmp_path, batch.BATCH_MODELS[3])
     cmd = seen["cmd"]
     assert cmd[cmd.index("--models") + 1:cmd.index("--parallel")] == ["ridge", "huber", "policy"]
+
+
+def test_batch4_passes_weekly_flag(tmp_path, monkeypatch):
+    seen = {}
+    monkeypatch.setattr(batch.subprocess, "run", lambda cmd, **k: seen.setdefault("cmd", cmd) and type("R", (), {"returncode": 0}))
+    (tmp_path / "logs").mkdir()
+    batch.run(("urbino", "p", "olivetti", "eco2", 10, ["1", "7"], 30), 5, tmp_path, batch.BATCH_MODELS[4],
+              batch.BATCH_EXTRA[4])
+    assert "--weekly" in seen["cmd"] and batch.BATCH_OUT[4] == "results/runs_batch4"

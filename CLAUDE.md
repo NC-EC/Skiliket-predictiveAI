@@ -177,7 +177,14 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   old policy 38/26/39 % and huber 56/47/45 %; median geo rel_mae <= 1.01 at every D (old policy up to 1.07).
 
 ## CURRENT TASK
-All planned batches done. Next: ask the user (paper figures/tables, EDIAQI with more D, alerts at other horizons).
+All planned batches done. In progress (30 Oct evening): paper figures/tables (`scripts/figures.py`, results/figures/),
+then **batch 4** = weekly-pattern experiment (code done in the cloud, 30 Oct): `run_learning_curve.py --weekly` adds
+`coldstart/weekly.py` inputs (day-of-week one-hot + y(t+h-7d) - y(t-7d), available only if t-7d >= the kit's start, i.e.
+never for D < 7; 0 + availability flag otherwise) and the `weekly_naive` baseline (persistence + last week's change).
+`run_batch.py --batch 4` = Urbino eco2 (10 min, h30/h60, D=1..60) + DALTON eco2 (h15/30/60), ridge/huber/policy,
+results/runs_batch4/; compare with batch 2 (Urbino) and batch 3 (DALTON) cell by cell. Estimate ~7-9 h with 5 workers.
+Urbino weekday/weekend split: `check_urbino.py --calendar-only --csv "results/runs_batch4/urbino_*.csv"`.
+EDIAQI cannot get more D (the record spans ~3 weeks).
 Random forest and GRU stay as reported results, no more tuning time.
 
 **Alerts (code done 2026-10-29, cloud; not run yet):** `scripts/run_alerts.py` (same splits as the learning curve;

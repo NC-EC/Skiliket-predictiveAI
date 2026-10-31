@@ -162,10 +162,23 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   0.85-0.90; weekends/holidays every model loses on the geometric mean. By room: von_neumann 0.87-0.92, olivetti
   0.91-0.94, turing 1.00-1.10 (never). Policy threshold 0.95 (sensitivity only) adds 3 olivetti cells.
 
+## Done 2026-10-30 (alerts, batch 3)
+- First attempt (batch 3 + alerts in parallel, 6 workers) was killed by Claude Code for low memory at 13:22; relaunched
+  as one chain (alerts 4 workers -> summarize_alerts -> batch 3 5 workers). Alerts now save per device
+  (`<out>_parts/`, resumable).
+- **Alerts done** (DALTON eco2 h30, D=3/7/14, `--events --ann-shift-min 0`, 13:30 -> 14:54): 51 of 68 devices give rows.
+  `results/summary_alerts_dalton_eco2_h30_{overall,devices}.csv` (raw 15 MB CSV local). At q90, tuned, budget 1 FA/day:
+  persistence has equal or higher recall (median 0.25/0.34/0.36 at D=3/7/14 vs models 0.17-0.33) but at D >= 7 more
+  false alarms (median 0.79-0.85/day vs 0.54-0.58) and fewer devices within budget (64-71 % vs LightGBM 79-80 %);
+  models warn ~15-17 min ahead vs 13.75. Only 16-21 % of events match an annotation.
+- **Batch 3 done** (14:53 -> 19:25, 4.5 h, 167 CSVs in `results/runs_batch3/`, 37 expected failures):
+  `results/summary_batch3_dalton_*`. Ridge/huber reproduce batch 1 exactly (max |diff| of geo rel_mae 0 over 1720
+  cells). New policy (ridge+huber, recomputed from cv_rel_mae) meets at D=14 on 50/47/52 % of devices (h15/30/60) vs the
+  old policy 38/26/39 % and huber 56/47/45 %; median geo rel_mae <= 1.01 at every D (old policy up to 1.07).
+
 ## CURRENT TASK
-Batch 3: `run_batch.py --batch 3` (DALTON eco2 h15/30/60, ridge huber policy, outputs in `results/runs_batch3/`).
-Estimate ~6-7 h with 5 workers (ridge+huber are ~46 % of batch 1's fit time per split). Give the user the estimate and
-wait for the go before launching. Random forest and GRU stay as reported results, no more tuning time.
+All planned batches done. Next: ask the user (paper figures/tables, EDIAQI with more D, alerts at other horizons).
+Random forest and GRU stay as reported results, no more tuning time.
 
 **Alerts (code done 2026-10-29, cloud; not run yet):** `scripts/run_alerts.py` (same splits as the learning curve;
 threshold p90/p95 of the D training days; decision offset chosen on a 30 % training tail at FA/day <= budget 0.5/1/2,

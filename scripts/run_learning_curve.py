@@ -26,6 +26,7 @@ from coldstart.alerts import evaluate_alerts, percentile_threshold
 from coldstart.cost import measure_fit, measure_inference
 from coldstart.cost import Cost
 from coldstart.models import REGISTRY, PolicyDelta
+from coldstart import longctx as lc
 from coldstart import weekly as wk
 
 
@@ -52,6 +53,10 @@ def main():
                    help="add day of week and the target's change over the same interval one week earlier (only where "
                         "the kit was already running then, so not before D = 7) to the learned models' inputs, and the "
                         "weekly_naive baseline")
+    p.add_argument("--long-context", type=int, default=0, metavar="HOURS",
+                   help="add a summary of the last HOURS (24) of the target (hourly means relative to the last reading, "
+                        "yesterday's change), counting only readings since the kit started, to the learned models' inputs; "
+                        "0 = off")
     p.add_argument("--cache", action=argparse.BooleanOptionalAction, default=True,
                    help="reuse the gridded series from data/cache/ instead of re-reading the raw files")
     p.add_argument("--parallel", type=int, default=1,
@@ -68,7 +73,11 @@ def main():
     gap = a.lags + a.horizon // a.cadence
     # learned models get calendar columns appended; baselines keep reading the lag block of w.X
     X = np.hstack([w.X, ev.calendar_features(w.t0)]) if a.calendar else w.X
-    n_static = (len(ev.CALENDAR) if a.calendar else 0) + (len(wk.WEEKLY) if a.weekly else 0)
+    if a.long_context not in (0, lc.HOURS):
+        raise SystemExit(f"--long-context supports {lc.HOURS} h only")
+    n_static = ((len(ev.CALENDAR) if a.calendar else 0) + (len(wk.WEEKLY) if a.weekly else 0)
+                + (len(lc.LONGCTX) if a.long_context else 0))
+    lctx = lc.LongContext(grid, a.target, a.cadence) if a.long_context else None
     wk_change = wk.last_week_change(grid, a.target, w.t0, w.t_target) if a.weekly else None
     print(f"{name}: grid={len(grid)} windows={len(w.y)} channels={chs} calendar={a.calendar}")
     # train lengths this device can hold (D days of training plus one test period); with --common-test the largest
@@ -94,8 +103,10 @@ def main():
             if a.weekly:
                 wcols = wk.weekly_columns(wk_change, w.t0, t_end - np.timedelta64(int(D * 86400), "s"))
                 Xs = np.hstack([X, wcols])
+            if lctx is not None:  # the same rule: only readings since the kit started
+                Xs = np.hstack([Xs, lctx.columns(w.t0, w.y0, w.t_target, t_end - np.timedelta64(int(D * 86400), "s"))])
             base = {"dataset": a.dataset, "device": a.device or "", "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
-                    "calendar": a.calendar, "weekly": a.weekly, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
+                    "calendar": a.calendar, "weekly": a.weekly, "long_context_h": a.long_context, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
                     "test_start": str(w.t0[te].min()), "host": platform.machine(), "parallel": a.parallel}
             # baselines (seed-independent)
             preds = {"persistence": ev.persistence(w, te), "moving_average": ev.moving_average(w, te, len(chs))}

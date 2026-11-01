@@ -55,3 +55,14 @@ def test_batch4_passes_weekly_flag(tmp_path, monkeypatch):
     batch.run(("urbino", "p", "olivetti", "eco2", 10, ["1", "7"], 30), 5, tmp_path, batch.BATCH_MODELS[4],
               batch.BATCH_EXTRA[4])
     assert "--weekly" in seen["cmd"] and batch.BATCH_OUT[4] == "results/runs_batch4"
+
+
+def test_batch5_long_context_dalton_both_targets(tmp_path, monkeypatch):
+    seen = {}
+    monkeypatch.setattr(batch.subprocess, "run", lambda cmd, **k: seen.setdefault("cmd", cmd) and type("R", (), {"returncode": 0}))
+    (tmp_path / "logs").mkdir()
+    batch.run(("dalton", "p", "H1_41", "tvoc", 5, batch.BATCH_DAYS[5], 30), 5, tmp_path, batch.BATCH_MODELS[5],
+              batch.BATCH_EXTRA[5])
+    cmd = seen["cmd"]
+    assert cmd[cmd.index("--long-context") + 1] == "24" and batch.BATCH_OUT[5] == "results/runs_batch5"
+    assert cmd[cmd.index("--days") + 1: cmd.index("--days") + 5] == ["1", "3", "7", "14"]

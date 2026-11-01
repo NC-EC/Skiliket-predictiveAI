@@ -1,0 +1,7 @@
+dataset,target,horizon_min,model,train_days,n_devices,n_meeting,frac_meeting
+dalton,tvoc,15,chronos_chronos2_ctx24h,0,57,36,0.631578947368421
+dalton,tvoc,15,persistence,0,57,0,0.0
+dalton,tvoc,30,chronos_chronos2_ctx24h,0,55,32,0.5818181818181818
+dalton,tvoc,30,persistence,0,55,0,0.0
+dalton,tvoc,60,chronos_chronos2_ctx24h,0,55,34,0.6181818181818182
+dalton,tvoc,60,persistence,0,55,0,0.0

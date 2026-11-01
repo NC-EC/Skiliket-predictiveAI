@@ -220,6 +220,18 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   At D=1 it beats huber on 96-100 % and the policy on 85-95 %. Cost: 15 ms per window (60 ms with covariates), process
   peak RSS 1.22 GB, ~25 min for all DALTON (~2.5 h with covariates) on CPU.
 
+## Done 2026-11-01 (zero-shot: Urbino Chronos-2, DALTON TVOC)
+- Urbino, context 24 h (`results/summary_zeroshot_urbino_eco2_{chronos2,chronos2_cov}_*`,
+  `results/checks/urbino_zeroshot_{bolt_tiny,chronos2,chronos2_cov}_daytype_calendar.csv`): Chronos-2 geo rel_mae
+  0.89-0.96 (h30) / 0.93-1.00 (h60) per room, covariates 0.01-0.02 better; huber at D=60 1.00-1.09. All rooms: weekdays
+  Chronos-2 0.93-0.94 (h30) ~ huber D=14 0.93; weekends Chronos-2 0.87 vs huber 1.27-1.28 (h30), 0.89-0.90 vs
+  1.34-1.40 (h60). Huber's calendar inputs expect classes in an empty room; Chronos follows the last 24 h.
+- DALTON TVOC (`results/summary_zeroshot_dalton_tvoc_{bolt_tiny,chronos2,chronos2_cov}_*`, 57 devices): share meeting
+  h15/30/60 Bolt tiny 21/36/45 %, Chronos-2 63/58/62 %, with covariates 67/73/67 %; median geo 0.94-0.96. Batch 2 best at
+  D=14: huber 29/18/9 %, LightGBM 3/15/30 %, policy 18/18/15 %. Chronos-2 beats huber D=14 on 71-82 % of devices.
+- Cost: Bolt tiny 0.4-0.7 ms/window, RSS 0.52-0.55 GB; Chronos-2 9-16 ms, 1.10-1.19 GB; with covariates 26-61 ms,
+  1.13-1.22 GB.
+
 ## CURRENT TASK
 **Done: batches 1-4, alerts h30/h60, paper figures and tables, Chronos-Bolt tiny/small on DALTON eco2 (results in
 the paper as Section 5.9 / Table 6, 2026-10-31).** Nothing running. Optional next: step 4 below, or a policy that

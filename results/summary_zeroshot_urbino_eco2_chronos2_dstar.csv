@@ -1,0 +1,13 @@
+dataset,device,target,horizon_min,model,d_star,d_star_status,d_star_first,max_days_tested,days_tested
+urbino,olivetti,eco2,30,chronos_chronos2_ctx24h,,insufficient,0.0,0.0,0
+urbino,olivetti,eco2,30,persistence,,insufficient,,0.0,0
+urbino,olivetti,eco2,60,chronos_chronos2_ctx24h,,insufficient,0.0,0.0,0
+urbino,olivetti,eco2,60,persistence,,insufficient,,0.0,0
+urbino,turing,eco2,30,chronos_chronos2_ctx24h,,insufficient,0.0,0.0,0
+urbino,turing,eco2,30,persistence,,insufficient,,0.0,0
+urbino,turing,eco2,60,chronos_chronos2_ctx24h,,insufficient,,0.0,0
+urbino,turing,eco2,60,persistence,,insufficient,,0.0,0
+urbino,von_neumann,eco2,30,chronos_chronos2_ctx24h,,insufficient,0.0,0.0,0
+urbino,von_neumann,eco2,30,persistence,,insufficient,,0.0,0
+urbino,von_neumann,eco2,60,chronos_chronos2_ctx24h,,insufficient,0.0,0.0,0
+urbino,von_neumann,eco2,60,persistence,,insufficient,,0.0,0

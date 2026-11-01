@@ -233,7 +233,6 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
   1.13-1.22 GB.
 
 ## CURRENT TASK
-**Done: batches 1-4, alerts h30/h60, paper figures and tables, Chronos-Bolt tiny/small on DALTON eco2 (results in
 **Now: batch 5, long-context local models (code 2026-11-01, cloud; synthetic tests only).** Why: Chronos sees 24 h of
 the target, the local models 30 min + calendar, so part of Chronos's gain may be context, not pretraining.
 `coldstart/longctx.py` + runner `--long-context 24`: 24 hourly means of the target over the last 24 h (relative to y0),
@@ -248,6 +247,7 @@ Steps: (1) smoke on one device first: `--dataset dalton --path data/raw/dalton -
 geo rel_mae for huber/ridge/lightgbm/policy with long context next to the same models without it (batch 1/3 eco2,
 batch 2 tvoc) and next to Chronos-2 (24 h); device by device, Chronos-2 vs huber-long-context at D = 1 and 14.
 
+**Done: batches 1-4, alerts h30/h60, paper figures and tables, Chronos-Bolt tiny/small on DALTON eco2 (results in
 the paper as Section 5.9 / Table 6, 2026-10-31).** Nothing running. Optional next: step 4 below, or a policy that
 switches from Chronos to the local model (needs Chronos scored on the policy's validation folds).
 **Chronos zero-shot (D = 0 point; code 2026-10-31, cloud, tested with a fake pipeline only).** `coldstart/zeroshot.py`

@@ -104,7 +104,12 @@ def main():
                 wcols = wk.weekly_columns(wk_change, w.t0, t_end - np.timedelta64(int(D * 86400), "s"))
                 Xs = np.hstack([X, wcols])
             if lctx is not None:  # the same rule: only readings since the kit started
-                Xs = np.hstack([Xs, lctx.columns(w.t0, w.y0, w.t_target, t_end - np.timedelta64(int(D * 86400), "s"))])
+                L = lctx.columns(w.t0, w.y0, w.t_target, t_end - np.timedelta64(int(D * 86400), "s"))
+                # early training windows of a new kit have little history (empty bins), test windows have a full day:
+                # clip these inputs to the range seen in training so linear models do not extrapolate on them
+                # (training rows are unchanged; an input guard a deployed kit can apply too)
+                L = np.clip(L, L[tr].min(axis=0), L[tr].max(axis=0))
+                Xs = np.hstack([Xs, L])
             base = {"dataset": a.dataset, "device": a.device or "", "target": a.target, "cadence_min": a.cadence, "horizon_min": a.horizon,
                     "calendar": a.calendar, "weekly": a.weekly, "long_context_h": a.long_context, "common_test": a.common_test, "train_days": D, "split": split, "n_train": len(tr), "n_test": len(te),
                     "test_start": str(w.t0[te].min()), "host": platform.machine(), "parallel": a.parallel}

@@ -12,6 +12,10 @@ Only readings at or after the kit's start (the first of its D training days) cou
 from before it was switched on. Readings are taken by time stamp, across segment gaps; a missing reading is skipped,
 never filled. An empty bin or an unavailable change is encoded as 0 with the share / flag telling the model so (an
 input encoding; no sensor reading is filled in). Kept out of evaluate.py so the grid cache key does not change.
+
+On a new kit the early training windows have little history (most bins empty), while test windows have a full day,
+so the runner clips these inputs to the range seen in the training windows before fitting: a smoke run on DALTON R1_51
+(h30) without that guard gave Huber a geometric rel_mae of 7.4 at D = 1 (1.5 without the long-context inputs).
 """
 from __future__ import annotations
 

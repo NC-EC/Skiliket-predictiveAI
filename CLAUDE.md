@@ -239,9 +239,13 @@ the target, the local models 30 min + calendar, so part of Chronos's gain may be
 share of non-empty bins, yesterday's change y(t+h-24h) - y(t-24h) + flag; only readings since the kit's start
 (t_end - D), across segment gaps by time stamp, never filled (empty bin = 0 + share). `run_batch.py --batch 5`: DALTON
 eco2 + tvoc, ridge/huber/lightgbm/policy, D = 1/3/7/14 (same test days as batches 1-3), `results/runs_batch5/`.
-Steps: (1) smoke on one device first: `--dataset dalton --path data/raw/dalton --device R1_51 --target eco2 --cadence 5
---horizon 30 --days 1 3 --models ridge huber policy --seeds 1 --long-context 24 --out results/smoke_longctx_R1_51.csv`
-(check it runs, time per split, and that huber's rel_mae is finite); (2) `run_batch.py --batch 5 --workers 5`
+First smoke (2026-11-01 night, R1_51 h30): ran fine (~7 s/split for huber), but huber geo rel_mae 7.36 at D=1 (1.49
+without) and 1.46 at D=3 (0.87 without); ridge ~unchanged (1.07 / 0.95), policy 1.03 / 0.98. Cause: early training windows
+of a new kit have mostly empty bins, test windows a full day, so huber (alpha 1e-4) extrapolates. Fix (cloud): the runner
+clips the long-context inputs to their training range per split. Steps: (1) repeat the smoke with D = 14 too:
+`--dataset dalton --path data/raw/dalton --device R1_51 --target eco2 --cadence 5 --horizon 30 --days 1 3 14 --models
+ridge huber policy --seeds 1 --long-context 24 --out results/smoke_longctx_R1_51_clip.csv` and compare with the first
+smoke and batch 3 (same splits); (2) `run_batch.py --batch 5 --workers 5`
 (estimated 8-12 h; one batch at a time, Chrome closed); (3) `summarize.py` per target ->
 `results/summary_batch5_dalton_{eco2,tvoc}_*`; (4) report per target and horizon, at D = 1/3/14: share meeting and median
 geo rel_mae for huber/ridge/lightgbm/policy with long context next to the same models without it (batch 1/3 eco2,

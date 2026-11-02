@@ -66,3 +66,4 @@ def test_batch5_long_context_dalton_both_targets(tmp_path, monkeypatch):
     cmd = seen["cmd"]
     assert cmd[cmd.index("--long-context") + 1] == "24" and batch.BATCH_OUT[5] == "results/runs_batch5"
     assert cmd[cmd.index("--days") + 1: cmd.index("--days") + 5] == ["1", "3", "7", "14"]
+    assert batch.BATCH_MODELS[5] == ["ridge", "lightgbm"]

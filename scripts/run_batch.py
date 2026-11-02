@@ -3,9 +3,12 @@
 Batch 1: DALTON eco2 (every device, h15/30/60).
 Batch 4: Urbino eco2 and DALTON eco2 with --weekly (ridge, huber, policy; results/runs_batch4/).
 Batch 3: DALTON eco2 again with ridge, huber and the corrected policy only (results/runs_batch3/).
-Batch 5: DALTON eco2 and tvoc with --long-context 24 (ridge, huber, lightgbm, policy; D = 1/3/7/14, the same test
-days as batches 1-3 because the largest D is still 14; results/runs_batch5/). Separates the longer context of the
-pretrained models from their pretraining.
+Batch 5: DALTON eco2 and tvoc with --long-context 24 (ridge and lightgbm; D = 1/3/7/14, the same test days as batches
+1-3 because the largest D is still 14; results/runs_batch5/). Separates the longer context of the pretrained models
+from their pretraining. Huber (alpha 1e-4, no penalty search) is left out: on the R1_51 smoke runs it overfit the 27
+extra inputs at D = 1-3 (geo rel_mae 5.1 at D = 1 even with the inputs clipped to their training range), and the policy
+is left out with it because Huber is one of its two candidates. Ridge (penalty by CV) and LightGBM (trees, no
+extrapolation) are the models that can use more inputs on short histories.
 Batch 2: DALTON tvoc, EDIAQI (providers with TVOC in ppb; eco2 and tvoc) and Urbino (3 rooms, eco2).
 Cadence per device from its native time step (native_cadence): 5 min when the grid would not split on its steps,
 else 10 min, and a 10-min device runs only h30 and h60. Urbino steps 5 min but 8-9 % of its steps are 10 min, which at
@@ -31,7 +34,7 @@ MODELS = ["ridge", "huber", "random_forest", "lightgbm", "gru", "policy"]
 # batch 3 re-runs DALTON eco2 with the corrected policy (ridge/huber candidates, cv_rel_mae column); RF, LightGBM and GRU
 # keep their batch-1 rows. Its own folder, so the resumable skip does not mistake batch-1 outputs for finished jobs.
 BATCH_MODELS = {1: MODELS, 2: MODELS, 3: ["ridge", "huber", "policy"], 4: ["ridge", "huber", "policy"],
-                5: ["ridge", "huber", "lightgbm", "policy"]}
+                5: ["ridge", "lightgbm"]}
 BATCH_OUT = {1: "results/runs", 2: "results/runs", 3: "results/runs_batch3", 4: "results/runs_batch4",
              5: "results/runs_batch5"}
 # batch 4 = batch 3 (DALTON eco2) plus the Urbino rooms, with the weekly-pattern inputs; compared with batches 2-3, the

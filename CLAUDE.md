@@ -242,14 +242,15 @@ eco2 + tvoc, ridge/huber/lightgbm/policy, D = 1/3/7/14 (same test days as batche
 First smoke (2026-11-01 night, R1_51 h30): ran fine (~7 s/split for huber), but huber geo rel_mae 7.36 at D=1 (1.49
 without) and 1.46 at D=3 (0.87 without); ridge ~unchanged (1.07 / 0.95), policy 1.03 / 0.98. Cause: early training windows
 of a new kit have mostly empty bins, test windows a full day, so huber (alpha 1e-4) extrapolates. Fix (cloud): the runner
-clips the long-context inputs to their training range per split. Steps: (1) repeat the smoke with D = 14 too:
-`--dataset dalton --path data/raw/dalton --device R1_51 --target eco2 --cadence 5 --horizon 30 --days 1 3 14 --models
-ridge huber policy --seeds 1 --long-context 24 --out results/smoke_longctx_R1_51_clip.csv` and compare with the first
-smoke and batch 3 (same splits); (2) `run_batch.py --batch 5 --workers 5`
-(estimated 8-12 h; one batch at a time, Chrome closed); (3) `summarize.py` per target ->
-`results/summary_batch5_dalton_{eco2,tvoc}_*`; (4) report per target and horizon, at D = 1/3/14: share meeting and median
-geo rel_mae for huber/ridge/lightgbm/policy with long context next to the same models without it (batch 1/3 eco2,
-batch 2 tvoc) and next to Chronos-2 (24 h); device by device, Chronos-2 vs huber-long-context at D = 1 and 14.
+clips the long-context inputs to their training range per split. Second smoke (with clip, D=1/3/14, 21 common splits):
+huber still 5.13 / 1.52 / 0.81 (batch 3 without: 1.49 / 0.87 / 0.79); ridge 0.99 / 0.93 / 0.89 (1.02 / 0.96 / 0.83);
+policy 1.00 / 0.97 / 0.88 (0.99 / 0.96 / 0.79). Decision (cloud, 2026-11-02): huber (alpha 1e-4) cannot use 27 extra
+inputs on 1-3 days, so batch 5 = ridge + lightgbm only (no huber, so no policy); report huber's smoke as a finding.
+Steps: (1) `run_batch.py --batch 5 --workers 5` (ridge + lightgbm are fast: estimated 1.5-3 h; Chrome closed); (2) `summarize.py` per target ->
+`results/summary_batch5_dalton_{eco2,tvoc}_*`; (3) report per target and horizon, at D = 1/3/14: share meeting and median
+geo rel_mae for ridge/lightgbm with long context next to the same models without it (batch 1 eco2, batch 2 tvoc) and
+next to Chronos-2 (24 h) and huber/policy without it; device by device, Chronos-2 vs the better of ridge/lightgbm with
+long context at D = 1 and 14.
 
 **Done: batches 1-4, alerts h30/h60, paper figures and tables, Chronos-Bolt tiny/small on DALTON eco2 (results in
 the paper as Section 5.9 / Table 6, 2026-10-31).** Nothing running. Optional next: step 4 below, or a policy that

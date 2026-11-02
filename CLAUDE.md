@@ -232,6 +232,17 @@ features beat persistence on 3 of 4 devices. Not yet checked against the cold-st
 - Cost: Bolt tiny 0.4-0.7 ms/window, RSS 0.52-0.55 GB; Chronos-2 9-16 ms, 1.10-1.19 GB; with covariates 26-61 ms,
   1.13-1.22 GB.
 
+## Done 2026-11-02 (batch 5, long context, ridge + LightGBM)
+- Batch 5 (`--long-context 24`, ridge/lightgbm, D=1/3/7/14, DALTON eco2 + tvoc): 00:30 -> 01:07 (0.6 h), 167 + 167 CSVs,
+  74 expected failures. `results/summary_batch5_dalton_{eco2,tvoc}_*`.
+- Long context helps only with more history and mostly LightGBM: at D=14 LightGBM meets on 44/50/55 % (eco2 h15/30/60;
+  without 32/26/42 %), tvoc 18/24/39 % (3/15/30 %); median geo 0.91-0.98 eco2. At D=1-3 it does not help or hurts
+  (ridge LC eco2 D=1 1.09-1.13 vs 1.06-1.09). Ridge LC ~= ridge at D=14 on eco2, slightly better at tvoc h60.
+- Chronos-2 vs the better of ridge/LightGBM-LC per device (picked after the fact, so favours the locals): D=1 Chronos
+  better on 89-93 % (eco2) / 82-86 % (tvoc); D=14 eco2 65/44/39 % (median ratio 0.99/1.01/1.03), tvoc 79/68/52 %
+  (0.96/0.97/1.00). So at D=14 on eco2 the long-context LightGBM catches up with Chronos-2 (h30/h60): part of Chronos's
+  edge with 2 weeks of data is context; with 1-3 days it is pretraining.
+
 ## CURRENT TASK
 **Now: batch 5, long-context local models (code 2026-11-01, cloud; synthetic tests only).** Why: Chronos sees 24 h of
 the target, the local models 30 min + calendar, so part of Chronos's gain may be context, not pretraining.
